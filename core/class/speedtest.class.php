@@ -18,7 +18,14 @@
 
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-require_once dirname(__FILE__) . '/../../../mail/core/php/mail.inc.php';
+
+if (class_exists('PHPMailer')) {
+	require_once dirname(__FILE__) . '/../../../mail/core/php/mail.inc.php';
+}
+
+
+
+
 
 class speedtest extends eqLogic {
 	
