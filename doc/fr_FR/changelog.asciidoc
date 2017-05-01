@@ -1,0 +1,9 @@
+﻿[horizontal]
+
+10.04.2017:: Ajout d'une commande pour connaître le déclencheur d'un changement d'état
+
+27.03.2017:: Ajout de commandes d'état. Préparation pour l'ajout de commande Action. Nettoyage du code.Refonte graphique de l'équipement. Maj doc
+
+20.03.2017:: Correction pour le mode personnalisé.Passage en stable.Possibilité d'inverser les commandes
+
+19.03.2017:: Mise à disposition du plugin sur le market en bétâ

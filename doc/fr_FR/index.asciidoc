@@ -1,0 +1,12 @@
+﻿== Plugin groupe
+
+=== Présentation
+Ce plugin permet de connaître l'état d'un groupe de commande et d'afficher le widget dans les différentes vues avec icônes personnalisables
+
+'''
+=== Installation/Configuration
+include::configuration.asciidoc[]
+
+'''
+=== Changelog
+include::changelog.asciidoc[]

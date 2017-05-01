@@ -1,0 +1,50 @@
+﻿
+
+Il faut télécharger le plugin sur le market. 
+
+image::../images/groupe_icon.png[align="center"]
+
+
+Après l'avoir activer il faut ensuite aller dans Plugins/Monitoring/Groupe
+
+Créer un nouvel équipement en cliquant sur le +
+
+Ensuite il faut activer l'équipement
+
+image::../images/groupe4.png[align="center"]
+
+Ensuite le configurer
+
+image::../images/groupe5.png[align="center"]
+
+-Ajouter un équipement: Permet de sélectionner les commandes d'état
+
+-Icone ON : Icône qui apparaîtra quand au moins 1 commande sera active
+
+-Icone Off : Icône qui apparaîtra quand tous les équipements seront inactives
+
+-Ensuite possibilité de teser les différentes commandes
+
+image::../images/groupe6.png[align="center"]
+
+-Et les utiliser dans les scénarios
+
+image::../images/groupe7.png[align="center"]
+
+-Nombre off: nombre d'équipement inactif
+
+-Nombre on: nombre d'équipement actif
+
+-Etat: Etat du widget (1 = 1 ou plusieurs actifs et = = tous inactifs)
+
+Screenshot sur le dashboard:
+
+image::../images/light.png[align="center"]
+
+image::../images/volets.png[align="center"]
+
+image::../images/alerte.png[align="center"]
+
+Le widget se met à jour dés qu'il y a un changement d'état.
+
+On peut donc imaginer l'utiliser pour n'importe quelle commande.
