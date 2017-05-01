@@ -19,13 +19,6 @@
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
-if (class_exists('PHPMailer')) {
-	require_once dirname(__FILE__) . '/../../../mail/core/php/mail.inc.php';
-}
-
-
-
-
 
 class speedtest extends eqLogic {
 	
@@ -85,66 +78,9 @@ class speedtest extends eqLogic {
 			$changed = $eq->checkAndUpdateCmd('speedul', $result['Upload']) || $changed;
 			$changed = $eq->checkAndUpdateCmd('speeddl', $result['Download']) || $changed;
 			$changed = $eq->checkAndUpdateCmd('ping', $result['Ping']) || $changed;	
-			if ($eq->getConfiguration('autMail', 0) == 1) {
-				speedtest::sendMail($pings,$downloads,$uploads,$eq);
-			}
-			
-			
-			
-					
 	}
 	
 	
-	public static function sendMail($pings,$downloads,$uploads,$eq) {
-		$mail = new PHPMailer;
-		
-		//$mail->SMTPDebug = 3;  
-		
-		$mail->isSMTP();
-		$mail->Host = $eq->getConfiguration('server');
-		$mail->Port = (integer) $eq->getConfiguration('port');
-		if ($eq->getConfiguration('smtp::security', '') != '' && $eq->getConfiguration('security', '') != 'none') {
-			$mail->SMTPSecure = $eq->getConfiguration('security', '');
-		}
-		if ($eq->getConfiguration('username') != '') {
-			$mail->SMTPAuth = true;
-			$mail->Username = $eq->getConfiguration('username'); // SMTP account username
-			$mail->Password = $eq->getConfiguration('password'); // SMTP account password
-		}
-		if ($eq->getConfiguration('dontcheckssl', 0) == 1) {
-			$mail->SMTPOptions = array(
-				'ssl' => array(
-					'verify_peer' => false,
-					'verify_peer_name' => false,
-					'allow_self_signed' => true,
-				),
-			);
-		}		
-		                          
-		$mail->setFrom($eq->getConfiguration('username'));
-		$mail->addAddress($eq->getConfiguration('email_speedtest'));   
-		$mail->isHTML(true);                                 
-		$mail->Subject = 'Speedtest';
-		$mail->Body    = '
-			Voici les rssultats du speedtest du ' . strftime("%d %B %Y à %H:%M") . '
-		   <table>
-			<tr>
-			 <th>Ping</th><th>Download</th><th>Upload</th>
-			</tr>
-			<tr>
-			 <td>' .  $pings . ' </td><td>' .  $downloads  . ' </td><td>' .  $uploads  . '</td>
-			</tr>
-		   </table>		
-		';
-		
-		
-		$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-		
-		if(!$mail->send()) {
-			log::add('speedtest','error', ' erreur: ' . $mail->ErrorInfo ); 
-		} 		
-		
-	}
 
 
     public function postUpdate() {
@@ -159,6 +95,8 @@ class speedtest extends eqLogic {
 		$speedDl->setEqLogic_id($this->getId());
 		$speedDl->setType('info');
 		$speedDl->setSubType('numeric');
+	    $speedDl->setTemplate('dashboard', 'line');
+		$speedDl->setTemplate('mobile', 'line');		
 		$speedDl->setUnite('Mbit/s');
 		$speedDl->save(); 			
 		
@@ -171,6 +109,8 @@ class speedtest extends eqLogic {
 		$speedul->setEqLogic_id($this->getId());
 		$speedul->setType('info');
 		$speedul->setSubType('numeric');
+	    $speedul->setTemplate('dashboard', 'line');
+		$speedul->setTemplate('mobile', 'line');		
 		$speedul->setUnite('Mbit/s');
 		$speedul->save(); 
 		
@@ -184,6 +124,8 @@ class speedtest extends eqLogic {
 		$ping->setEqLogic_id($this->getId());
 		$ping->setType('info');
 		$ping->setSubType('numeric');
+	    $ping->setTemplate('dashboard', 'line');
+		$ping->setTemplate('mobile', 'line');		
 		$ping->setUnite('ms');
 		$ping->save(); 
 		

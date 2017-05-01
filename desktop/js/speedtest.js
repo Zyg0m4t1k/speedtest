@@ -26,14 +26,6 @@ $("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=autCron]
     }
 });
 
-$("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=autMail]", 'change ').delegate('.eqLogicAttr[data-l1key=configuration][data-l2key=autMail]','change ', function () {
-    if ($(this).value() == 1) {
-        $('#mail_speedtest').show();
-    } else {
-        $('#mail_speedtest').hide();
-    }
-});
-
 
 $('#bt_cronGenerator').on('click',function(){
     jeedom.getCronSelectModal({},function (result) {
@@ -46,27 +38,12 @@ $('#bt_cronGenerator').on('click',function(){
 			  if (isset(_eqLogic.configuration.AutCron)) {	
 				if  (_eqLogic.configuration.AutCron == 0) {
 					$('#cron_speedtest').hide();
-					$("#valueCron").val('');
 				} else {
 					$('#cron_speedtest').show();
 				}
 			  } else {
 					$('#cron_speedtest').hide();
-					$("#valueCron").val('');  
 			  }
-			  
-			  if (isset(_eqLogic.configuration.AutMail)) {	
-				if  (_eqLogic.configuration.AutMail == 0) {
-					$('#mail_speedtest').hide();
-	
-				} else {
-					$('#mail_speedtest').show();
-				}
-			  } else {
-					$('#mail_speedtest').hide();
-	
-			  }		  
-		  
 		}
  }
 

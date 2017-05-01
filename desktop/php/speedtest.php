@@ -23,13 +23,13 @@ foreach ($eqLogics as $eqLogic) {
    <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
     <legend>{{Equipements}}
     </legend>
-		<div class="eqLogicThumbnailContainer">  
-          <div class="cursor eqLogicAction" data-action="add" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
-             <center>
-                <i class="fa fa-plus-circle" style="font-size : 7em;color:#00A9EC;"></i>
+		<div class="eqLogicThumbnailContainer">
+			<div class="cursor eqLogicAction" data-action="add" style="background-color : #ffffff; height : 140px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
+            <center>
+              <i class="fa fa-plus-circle" style="font-size : 5em;color:#00A9EC;"></i>
             </center>
-            <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#00A9EC"><center>{{Ajouter}}</center></span>                
-            </div>
+			<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#00A9EC"><center>{{Ajouter}}</center></span>
+			</div>           
 			<div class="cursor eqLogicAction" data-action="gotoPluginConf" style="background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;">
             <center>
             <i class="fa fa-wrench" style="font-size : 5em;color:#767676;"></i>
@@ -138,69 +138,6 @@ foreach ($eqLogics as $eqLogic) {
                         </form>
                         
                         <br />
-                        <form class="form-horizontal">
-                        
-                        	    <div class="form-group">
-                                <label class="col-sm-1 control-label">{{Activer mail}}</label>
-                                    <div class="col-sm-1">
-                                    <input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="autMail"/>
-                                    </div> 
-                                </div>
-                                
-                                
-                                <div id="mail_speedtest">
-                                	<fieldset>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">{{Serveur SMTP}}</label>
-                                        <div class="col-md-4">
-                                            <input type="text" class="eqLogicAttr form-control" data-l1key='configuration' data-l2key='server' />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">{{Port SMTP}}</label>
-                                        <div class="col-md-4">
-                                            <input type="text" class="eqLogicAttr form-control" data-l1key='configuration' data-l2key='port' />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">{{Securité SMTP}}</label>
-                                        <div class="col-md-4">
-                                            <select class="eqLogicAttr form-control" data-l1key='configuration' data-l2key='security'>
-                                                <option value=''>{{Aucune}}</option>
-                                                <option value='tls'>TLS</option>
-                                                <option value='ssl'>SSL</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">{{Utilisateur SMTP}}</label>
-                                        <div class="col-md-4">
-                                            <input type="text" class="eqLogicAttr form-control" data-l1key='configuration' data-l2key='username' />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">{{Mot de passe SMTP}}</label>
-                                        <div class="col-md-4">
-                                            <input type="password" class="eqLogicAttr form-control" data-l1key='configuration' data-l2key='password' />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label">{{Email receveur}}</label>
-                                        <div class="col-md-4">
-                                            <input type="text" class="eqLogicAttr form-control" data-l1key='configuration' data-l2key='email_speedtest' />
-                                        </div>
-                                    </div>                
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label"></label>
-                                        <div class="col-sm-4">
-                                         <label class="control-label"><input type="checkbox" class="eqLogicAttr" data-l1key='configuration' data-l2key='dontcheckssl' />{{Ne pas verifier le certificat SSL}}</label>
-                                        </div>
-                                    </div>
-                                </fieldset>    
-                             </div>                        
-                         	
-                         </form>
-                        
                         
                     </div>
 
