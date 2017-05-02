@@ -136,9 +136,6 @@ foreach ($eqLogics as $eqLogic) {
                                 </div>                     	
                             </div>
                         </form>
-                        
-                        <br />
-                        
                     </div>
 
 

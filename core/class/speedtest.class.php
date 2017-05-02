@@ -52,30 +52,39 @@ class speedtest extends eqLogic {
 	
 	public function getInfo($_options=false) {
 		
-			$cmd = 'speedtest-cli --simple --secure --json';
-			$cmd = exec($cmd,$results);
-			$pings = str_replace("Ping: ", "" , $results[0]);
-			$ping = explode(' ' , $pings);
-			$result['Ping'] =  $ping[0];
-			
-			$downloads = str_replace("Download: ", "" , $results[1]);
-			$download = explode(' ' , $downloads);
-			$result['Download'] = $download[0];	
-			
-			$uploads = str_replace("Upload: ", "" , $results[2]);
-			$upload	= explode(' ' , $uploads);
-			$result['Upload'] = $upload[0];	
-			
-			if ($_options != NULL) {
-					$eq = speedtest::byId($_options['speedtest_id']);	
-			} else {
-				$eq = speedtest::byId($this->getEqLogic_id());	
+		if ($_options != NULL) {
+			$eq = speedtest::byId($_options['speedtest_id']);	
+		} else {
+			$eq = speedtest::byId($this->getEqLogic_id());	
+		}
+				
+		$cmd = 'speedtest-cli --share';
+		$cmd = exec($cmd,$results);
+		foreach ($results as $result) {
+			log::add('speedtest','debug','info : ' .$result);
+			if ((strstr($result, "Download:"))) {
+				$downloads = str_replace("Download: ", "" , $result);
+				$download = explode(' ' , $downloads);
+				$changed = $eq->checkAndUpdateCmd('speeddl', $download[0]) || $changed;
+				log::add('speedtest','debug','dl : ' . $download[0]);
+				
+			} elseif(((strstr($result, "Upload:")))) {
+				$uploads = str_replace("Upload: ", "" , $result);
+				$upload = explode(' ' , $uploads);
+				$changed = $eq->checkAndUpdateCmd('speedul', $upload[0]) || $changed;
+				log::add('speedtest','debug','ul : ' . $upload[0]);				
+				
+			} elseif (((strstr($result, "Share results:")))) {
+				$img = str_replace("Share results: ", "" , $result);
+				$eq->setConfiguration('image',$img);
+				$eq->save();
+				
+			} elseif (preg_match_all('#Hosted by .*: (.*?) ms#',$result,$ping)) {
+				log::add('speedtest','debug','ping : ' . $ping[1][0]);
+				$changed = $eq->checkAndUpdateCmd('ping', $ping[1][0]) || $changed;
+				
 			}
-			
-			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
-			$changed = $eq->checkAndUpdateCmd('speedul', $result['Upload']) || $changed;
-			$changed = $eq->checkAndUpdateCmd('speeddl', $result['Download']) || $changed;
-			$changed = $eq->checkAndUpdateCmd('ping', $result['Ping']) || $changed;	
+		};				
 	}
 	
 	
@@ -181,6 +190,19 @@ class speedtest extends eqLogic {
 
 	}
 	
+	
+	public function toHtml($_version = 'dashboard') {
+
+				$replace = $this->preToHtml($_version);
+				if (!is_array($replace)) {
+					return $replace;
+				}
+				$version = jeedom::versionAlias($_version);
+				$replace['#image#'] = $this->getConfiguration('image');
+				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));	
+
+	}
+		
 
 	
 
