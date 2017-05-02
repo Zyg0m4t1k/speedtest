@@ -22,7 +22,6 @@ $("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=autCron]
         $('#cron_speedtest').show();
     } else {
         $('#cron_speedtest').hide();
-		$("#valueCron").val(''); 
     }
 });
 
@@ -35,8 +34,8 @@ $('#bt_cronGenerator').on('click',function(){
 
  function printEqLogic(_eqLogic) {
 		if (isset(_eqLogic.configuration)) {
-			  if (isset(_eqLogic.configuration.AutCron)) {	
-				if  (_eqLogic.configuration.AutCron == 0) {
+			  if (isset(_eqLogic.configuration.autCron)) {	
+				if  (_eqLogic.configuration.autCron == 0) {
 					$('#cron_speedtest').hide();
 				} else {
 					$('#cron_speedtest').show();
