@@ -1,7 +1,7 @@
-﻿== Plugin groupe
+﻿== Plugin SPEEDTEST
 
 === Présentation
-Ce plugin permet de connaître l'état d'un groupe de commande et d'afficher le widget dans les différentes vues avec icônes personnalisables
+Ce plugin permet de vérifier l'état de sa connexion internet et Afficher un widget configurable
 
 '''
 === Installation/Configuration

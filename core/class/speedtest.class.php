@@ -67,14 +67,12 @@ class speedtest extends eqLogic {
 			$result['Upload'] = $upload[0];	
 			
 			if ($_options != NULL) {
-				log::add('speedtest','debug', ' id: ' . print_r($_options,true) );
-				$eq = speedtest::byId($_options['speedtest_id']);	
+					$eq = speedtest::byId($_options['speedtest_id']);	
 			} else {
-				log::add('speedtest','debug', ' Non id: ');
 				$eq = speedtest::byId($this->getEqLogic_id());	
 			}
-		
-		
+			
+			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
 			$changed = $eq->checkAndUpdateCmd('speedul', $result['Upload']) || $changed;
 			$changed = $eq->checkAndUpdateCmd('speeddl', $result['Download']) || $changed;
 			$changed = $eq->checkAndUpdateCmd('ping', $result['Ping']) || $changed;	
@@ -128,6 +126,18 @@ class speedtest extends eqLogic {
 		$ping->setTemplate('mobile', 'line');		
 		$ping->setUnite('ms');
 		$ping->save(); 
+		
+		$status = $this->getCmd(null, 'status');
+		if (!is_object($status)) {
+			$status = new speedtestCmd();
+			$status->setName(__('Etat', __FILE__));
+							
+		}
+		$status->setLogicalId('status');
+		$status->setEqLogic_id($this->getId());
+		$status->setType('info');
+		$status->setSubType('binary');	
+		$status->save(); 		
 		
 		$refresh = $this->getCmd(null, 'refresh');
 		if (!is_object($refresh)) {
