@@ -60,30 +60,36 @@ class speedtest extends eqLogic {
 				
 		$cmd = 'speedtest-cli --share';
 		$cmd = exec($cmd,$results);
+		if (count($results) == 1) {
+			$changed = $eq->checkAndUpdateCmd('status', 0) || $changed;
+		} else {
+			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
+		}
+		
 		foreach ($results as $result) {
-			log::add('speedtest','debug','info : ' .$result);
+			log::add('speedtest','debug','info : ' . $result);
+				if ($result[0] == '.') {
+					log::add('speedtest','debug','suppresion du : ' .$result[0]);
+					$result = substr($result,1);
+				}
 			if ((strstr($result, "Download:"))) {
 				$downloads = str_replace("Download: ", "" , $result);
-				$download = explode(' ' , $downloads);
+				$download = explode(' ' , $downloads);			
 				$changed = $eq->checkAndUpdateCmd('speeddl', $download[0]) || $changed;
 				log::add('speedtest','debug','dl : ' . $download[0]);
-				
 			} elseif(((strstr($result, "Upload:")))) {
 				$uploads = str_replace("Upload: ", "" , $result);
-				$upload = explode(' ' , $uploads);
+				$upload = explode(' ' , $uploads);				
 				$changed = $eq->checkAndUpdateCmd('speedul', $upload[0]) || $changed;
 				log::add('speedtest','debug','ul : ' . $upload[0]);				
-				
 			} elseif (((strstr($result, "Share results:")))) {
 				$img = str_replace("Share results: ", "" , $result);
 				$eq->setConfiguration('image',$img);
 				$eq->save();
-				
 			} elseif (preg_match_all('#Hosted by .*: (.*?) ms#',$result,$ping)) {
 				log::add('speedtest','debug','ping : ' . $ping[1][0]);
 				$changed = $eq->checkAndUpdateCmd('ping', $ping[1][0]) || $changed;
-				
-			}
+			} 
 		};				
 	}
 	
@@ -192,14 +198,44 @@ class speedtest extends eqLogic {
 	
 	
 	public function toHtml($_version = 'dashboard') {
-
+		
+		if ($this->getConfiguration('autAlt', 0) == 1) {
 				$replace = $this->preToHtml($_version);
 				if (!is_array($replace)) {
 					return $replace;
 				}
 				$version = jeedom::versionAlias($_version);
 				$replace['#image#'] = $this->getConfiguration('image');
-				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));	
+				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
+		} else {
+			$replace = $this->preToHtml($_version);
+			if (!is_array($replace)) {
+				return $replace;
+			}
+			$version = jeedom::versionAlias($_version);
+			$cmd_html = '';
+			$br_before = 0;
+			foreach ($this->getCmd(null, null, true) as $cmd) {
+				if (isset($replace['#refresh_id#']) && $cmd->getId() == $replace['#refresh_id#']) {
+					continue;
+				}
+				if ($br_before == 0 && $cmd->getDisplay('forceReturnLineBefore', 0) == 1) {
+					$cmd_html .= '<br/>';
+				}
+				$cmd_html .= $cmd->toHtml($_version, '', $replace['#cmd-background-color#']);
+				$br_before = 0;
+				if ($cmd->getDisplay('forceReturnLineAfter', 0) == 1) {
+					$cmd_html .= '<br/>';
+					$br_before = 1;
+				}
+			}
+			$replace['#cmd#'] = $cmd_html;
+					
+			return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'eqLogic')));			
+			
+		}
+
+	
 
 	}
 		

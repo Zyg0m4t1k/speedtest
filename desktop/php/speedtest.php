@@ -136,6 +136,14 @@ foreach ($eqLogics as $eqLogic) {
                                 </div>                     	
                             </div>
                         </form>
+                    	<form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">{{Widget alternatif}}</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="autAlt"/>
+                                </div>                   	
+                            </div>
+                        </form>                        
                     </div>
 
 
