@@ -20,12 +20,16 @@ image::../images/speed2.png[align="center"]
 
 image::../images/speed3.png[align="center"]
 
--Et les utiliser dans les scénarios
-
 
 Screenshot sur le dashboard:
 
 image::../images/speed1.png[align="center"]
+
+ou
+
+image::../images/speedtest.png[align="center"]
+
+
 
 
 Le widget se met à jour dés qu'il y a un changement d'état.

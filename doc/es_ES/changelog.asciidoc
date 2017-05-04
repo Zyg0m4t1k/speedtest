@@ -1,3 +1,5 @@
 ﻿[horizontal]
 
-01.05.2017:: Beta sur le market
+02.05.2017:: Passage en stable.
+
+01.05.2017:: Beta sur le market.
