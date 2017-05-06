@@ -1,5 +1,5 @@
 ﻿[horizontal]
 
-02.05.2017:: Passage en stable.
+02.05.2017:: Übergang in stabil
 
-01.05.2017:: Beta sur le market.
+01.05.2017:: Beta auf dem Markt

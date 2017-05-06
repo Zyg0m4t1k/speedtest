@@ -1,11 +1,11 @@
 ﻿
 
-Il faut télécharger le plugin sur le market. 
+Sie müssen das Plugin von dem Markt herunterladen. 
 
 image::../images/speedtest_icon.png[align="center"]
 
 
-Après l'avoir activer et si les dépendances sont ok,  il faut ensuite aller dans Plugins/Monitoring/speedtest
+Nach der Aktivierung und wenn die Abhängigkeiten ok sind, müssen Sie dann auf Plugins/Monitoring/speedtest gehen.
 
 Il faut activer l’équipement
 
@@ -25,7 +25,7 @@ Screenshot sur le dashboard:
 
 image::../images/speed1.png[align="center"]
 
-ou
+oder
 
 image::../images/speedtest.png[align="center"]
 

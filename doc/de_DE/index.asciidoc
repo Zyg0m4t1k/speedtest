@@ -1,12 +1,12 @@
-﻿== Plugin SPEEDTEST
+== SPEEDTEST Plugin
 
-=== Présentation
-Ce plugin permet de vérifier l'état de sa connexion internet et Afficher un widget configurable
+=== Präsentation
+Dieses Plugin ermöglicht es Ihnen, den Status der Internet-Verbindung zu überprüfen und zeigt ein konfigurierbares Widget an.
 
 '''
-=== Installation/Configuration
+=== Installation/Konfiguration
 include::configuration.asciidoc[]
 
 '''
-=== Changelog
+=== Änderungsprotokoll
 include::changelog.asciidoc[]
