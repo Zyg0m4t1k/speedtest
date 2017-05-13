@@ -1,5 +1,7 @@
 ﻿[horizontal]
 
+13.05.2017:: Ajout de la possibilité de choisir un serveur
+
 02.05.2017:: Übergang in stabil
 
 01.05.2017:: Beta auf dem Markt
