@@ -57,8 +57,13 @@ class speedtest extends eqLogic {
 		} else {
 			$eq = speedtest::byId($this->getEqLogic_id());	
 		}
+		if ($eq->getConfiguration('server_id') != '') {
+			$server = ' --server ' . $eq->getConfiguration('server_id'); 
+		} else {
+			$server = '';
+		}
 				
-		$cmd = 'speedtest-cli --share';
+		$cmd = 'speedtest-cli' . $server . ' --share';
 		$cmd = exec($cmd,$results);
 		if (count($results) == 1) {
 			$changed = $eq->checkAndUpdateCmd('status', 0) || $changed;

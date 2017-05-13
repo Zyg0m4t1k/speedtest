@@ -143,7 +143,15 @@ foreach ($eqLogics as $eqLogic) {
                                     <input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="autAlt"/>
                                 </div>                   	
                             </div>
-                        </form>                        
+                        </form>
+                     <div class="form-group">
+                       <label class="col-sm-1 control-label">{{Id serveur}}</label>
+                        <div class="col-sm-1">
+                            <input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
+                        </div>  
+                        <label class="col-md-3 control-label" >{{Liste des serveurs sur http://www.speedtestserver.com/}}</label>         
+                    </div>                         
+                                                
                     </div>
 
 
