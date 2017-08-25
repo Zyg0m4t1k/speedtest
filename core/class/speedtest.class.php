@@ -47,7 +47,36 @@ class speedtest extends eqLogic {
 		$cmd = 'sudo /bin/bash ' .dirname(__FILE__) . '/../../resources/install.sh';
 		$cmd .= ' >> ' . log::getPathToLog(__CLASS__ . '_update') . ' 2>&1 &';
 		exec($cmd);		
-		
+	}
+	
+	public static function cronHourly() {
+		$getIp = config::byKey('checkIp', 'speedtest', 0);
+		if ($getIp == 1 && config::byKey('ipkey', 'speedtest') != '' ) {
+			$ip = self::getIp();
+			if ($ip != config::byKey('ipkey', 'speedtest')) {
+				log::add('speedtest', 'error', 'Changement d\'ip :' . $ip);
+				config::save('ipkey',$ip,'speedtest') ;
+			} 
+		}
+	}
+	
+	public function getIp() {
+		$cmds = array('ipinfo.io/ip','ipecho.net/plain','ifconfig.me');
+		$check = '';
+		foreach($cmds as $cmd) {
+			$ip = 'sudo curl ' . $cmd;
+			$ip = exec($ip);
+			if (filter_var($ip, FILTER_VALIDATE_IP)) {
+				return $ip;
+				break;
+			} else {
+				$check = false;
+			}
+		}
+		if(!$check) {
+			log::add('speedtest', 'error', '!!! Impossible de détecter l\'adresse IP !!!');	
+			return false;	
+		}
 	}
 	
 	public function getInfo($_options=false) {
@@ -63,7 +92,7 @@ class speedtest extends eqLogic {
 			$server = '';
 		}
 				
-		$cmd = 'speedtest-cli' . $server . ' --share';
+		$cmd = 'sudo speedtest-cli' . $server . ' --share';
 		$cmd = exec($cmd,$results);
 		if (count($results) == 1) {
 			$changed = $eq->checkAndUpdateCmd('status', 0) || $changed;
