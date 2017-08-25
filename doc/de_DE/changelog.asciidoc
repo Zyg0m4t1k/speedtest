@@ -1,4 +1,5 @@
 ﻿[horizontal]
+25.08.2017:: Check l'adresse ip et envoi d'un message avec la nouvelle adresse ip en cas de changement
 
 13.05.2017:: Ajout de la possibilité de choisir un serveur
 
