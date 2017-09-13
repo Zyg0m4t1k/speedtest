@@ -95,9 +95,9 @@ class speedtest extends eqLogic {
 		$cmd = 'sudo speedtest-cli' . $server . ' --share';
 		$cmd = exec($cmd,$results);
 		if (count($results) == 1) {
-			$changed = $eq->checkAndUpdateCmd('status', 0) || $changed;
+			$changed = $eq->checkAndUpdateCmd('status', 0);
 		} else {
-			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
+			$changed = $eq->checkAndUpdateCmd('status', 1);
 		}
 		
 		foreach ($results as $result) {
