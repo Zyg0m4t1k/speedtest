@@ -60,7 +60,7 @@ foreach ($eqLogics as $eqLogic) {
   <a class="btn btn-danger eqLogicAction pull-right" data-action="remove"><i class="fa fa-minus-circle"></i> {{Supprimer}}</a>
 
  <ul class="nav nav-tabs" role="tablist">
-  <li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
+  <li role="presentation"><a href="" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
   <li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-tachometer"></i> {{Equipement}}</a></li>
   <li role="presentation"><a href="#infotab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Configuration}}</a></li>
   <li role="presentation"><a href="#infocmd" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Commandes}}</a></li>
@@ -136,22 +136,34 @@ foreach ($eqLogics as $eqLogic) {
                                 </div>                     	
                             </div>
                         </form>
+                        <br/>
                     	<form class="form-horizontal">
+                         <div class="form-group">
+                           <label class="col-sm-1 control-label">{{Id serveur}}</label>
+                            <div class="col-sm-1">
+                                <input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
+                            </div> 
+                             <div class="col-sm-2"> 
+                            <label class=" ontrol-label" ><a style="text-decoration: underline"  href="http://www.speedtestserver.com/">{{Liste des serveurs}}</a></label>  
+                            </div>       
+                        </div> 
+                          <br/>                        
+                        
+                        
                             <div class="form-group">
                                 <label class="col-sm-1 control-label">{{Widget alternatif}}</label>
                                 <div class="col-sm-1">
-                                    <input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="autAlt"/>
+                                    <input type="checkbox" class="eqLogicAttr widgetType" data-l1key="configuration" data-l2key="autAlt"/>
                                 </div>                   	
                             </div>
-                        </form>
-                     <div class="form-group">
-                       <label class="col-sm-1 control-label">{{Id serveur}}</label>
-                        <div class="col-sm-1">
-                            <input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
-                        </div>  
-                        <label class="col-md-3 control-label" >{{Liste des serveurs sur http://www.speedtestserver.com/}}</label>         
-                    </div>                         
-                                                
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">{{Widget Betâ}}</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="eqLogicAttr widgetType" data-l1key="configuration" data-l2key="autAltBeta" />
+                                </div>                   	
+                            </div>                            
+                                              
+                           </form>                      
                     </div>
 
 

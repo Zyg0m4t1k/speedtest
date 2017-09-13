@@ -15,7 +15,12 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
  
+ 
+ 
 $("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true});
+
+
+
 
 $("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=autCron]", 'change ').delegate('.eqLogicAttr[data-l1key=configuration][data-l2key=autCron]','change ', function () {
     if ($(this).value() == 1) {

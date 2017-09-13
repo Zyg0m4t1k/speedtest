@@ -129,8 +129,14 @@ class speedtest extends eqLogic {
 	
 	
 
-
-    public function postUpdate() {
+    public function preUpdate() {
+        if ($this->getConfiguration('autAlt', 0) == 1 && $this->getConfiguration('autAltBeta', 0) == 1) {
+            throw new Exception(__('Il ne faut sélectionner qu\'un widget', __FILE__));
+        }
+	}    
+	
+	
+	public function postUpdate() {
 		$speedDl = $this->getCmd(null, 'speeddl');
 		if (!is_object($speedDl)) {
 			$speedDl = new speedtestCmd();
@@ -241,7 +247,18 @@ class speedtest extends eqLogic {
 				$version = jeedom::versionAlias($_version);
 				$replace['#image#'] = $this->getConfiguration('image');
 				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
-		} else {
+		} elseif ($this->getConfiguration('autAltBeta', 0) == 1) {
+			  $replace = $this->preToHtml($_version);
+			  if (!is_array($replace)) {
+				  return $replace;
+			  }
+			  $version = jeedom::versionAlias($_version);
+			  $arr = parse_url($this->getConfiguration('image'));
+			  $url = 'https://beta.speedtest.net' . $arr['path'];
+			  $replace['#image#'] = $url;
+			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
+			
+		}else {
 			$replace = $this->preToHtml($_version);
 			if (!is_array($replace)) {
 				return $replace;
