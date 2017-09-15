@@ -91,7 +91,7 @@ class speedtest extends eqLogic {
 		} else {
 			$server = '';
 		}
-				
+		$changed = false;	
 		$cmd = 'sudo speedtest-cli' . $server . ' --share';
 		$cmd = exec($cmd,$results);
 		if (count($results) == 1) {
@@ -124,7 +124,11 @@ class speedtest extends eqLogic {
 				log::add('speedtest','debug','ping : ' . $ping[1][0]);
 				$changed = $eq->checkAndUpdateCmd('ping', $ping[1][0]) || $changed;
 			} 
-		};				
+		};	
+		if ($changed) {
+			$eq->refreshWidget();
+		}		
+					
 	}
 	
 	
@@ -239,15 +243,18 @@ class speedtest extends eqLogic {
 	
 	public function toHtml($_version = 'dashboard') {
 		
-		if ($this->getConfiguration('autAlt', 0) == 1) {
+		if ($this->getConfiguration('autAlt', 0) == 1) {			
 				$replace = $this->preToHtml($_version);
 				if (!is_array($replace)) {
 					return $replace;
 				}
 				$version = jeedom::versionAlias($_version);
 				$replace['#image#'] = $this->getConfiguration('image');
+				$refresh = $this->getCmd(null, 'refresh');
+				$replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';				
 				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
 		} elseif ($this->getConfiguration('autAltBeta', 0) == 1) {
+			
 			  $replace = $this->preToHtml($_version);
 			  if (!is_array($replace)) {
 				  return $replace;
@@ -256,8 +263,9 @@ class speedtest extends eqLogic {
 			  $arr = parse_url($this->getConfiguration('image'));
 			  $url = 'https://beta.speedtest.net' . $arr['path'];
 			  $replace['#image#'] = $url;
+			  $refresh = $this->getCmd(null, 'refresh');
+			  $replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';			  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
-			
 		}else {
 			$replace = $this->preToHtml($_version);
 			if (!is_array($replace)) {
@@ -304,7 +312,7 @@ class speedtest extends eqLogic {
 class speedtestCmd extends cmd {
 	
 	
-    public function execute($_options = array()) {
+    public function execute($_options = array()) {	
 		if ($this->getLogicalId() == 'refresh') {
 			speedtest::getInfo();
 		}		
