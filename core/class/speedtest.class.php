@@ -289,19 +289,10 @@ class speedtest extends eqLogic {
 				}
 			}
 			$replace['#cmd#'] = $cmd_html;
-					
 			return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'eqLogic')));			
-			
 		}
-
-	
-
 	}
-		
 
-	
-
-	
 	public function dontRemoveCmd() {
 		return true;
 	}	
