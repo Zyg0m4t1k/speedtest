@@ -21,10 +21,24 @@ if (!isConnect('admin')) {
 	throw new Exception('{{401 - Accès non autorisé}}');
 }
 ?>
+
+
 <form class="form-horizontal">
 	<fieldset>
+    <div class="form-group">
+    <label class="col-lg-1 control-label">{{Droits Sudo : }}</label>
+    <?php
+    if (exec('sudo cat /etc/sudoers') == "") {
+        echo '<div class="col-lg-1"><span class="label label-success">OK</span></div>';
+    } else {
+        echo '<div class="col-lg-1"><span class="label label-danger">NOK</span>    <span><a href="http://doc.jeedom.fr/fr_FR/doc-installation.html#troubleshoting"><i class="fa fa-question-circle"></i></a></span></div>';
+    }
+    ?>
+    </div>
+    </br>    
+    
 	 <div class="form-group">
-            <label class="col-sm-2 control-label">{{Check adresse Ip}}</label>
+            <label class="col-lg-1 control-label">{{Check adresse Ip}}</label>
             <div class="col-sm-3">
                 <input type="checkbox" class="configKey" data-l1key="checkIp" />
             </div>
