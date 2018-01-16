@@ -28,7 +28,7 @@ if (!isConnect('admin')) {
     <div class="form-group">
     <label class="col-lg-1 control-label">{{Droits Sudo : }}</label>
     <?php
-    if (exec('sudo cat /etc/sudoers') == "") {
+    if (exec('sudo cat /etc/sudoers') != "") {
         echo '<div class="col-lg-1"><span class="label label-success">OK</span></div>';
     } else {
         echo '<div class="col-lg-1"><span class="label label-danger">NOK</span>    <span><a href="http://doc.jeedom.fr/fr_FR/doc-installation.html#troubleshoting"><i class="fa fa-question-circle"></i></a></span></div>';

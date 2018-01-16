@@ -1,4 +1,7 @@
 ﻿[horizontal]
+
+16.01.2018:: Changement de commande pour meilleure compatibilité . Icone , changelog et graphique.
+
 15.09.2017:: Ajout du refresh .
 
 13.09.2017:: Ajout d'un widget . 

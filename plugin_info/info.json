@@ -6,5 +6,7 @@
 	"author" : "zyg0m4t1k",
 	"require" : "3.0",
 	"category" : "monitoring",
+	"changelog" : "https://github.com/Zyg0m4t1k/speedtest/blob/master/doc/#language#/changelog.asciidoc",
+	"documentation" : "http://htmlpreview.github.io/?https://github.com/Zyg0m4t1k/speedtest/blob/master/doc/#language#/index.html",	
 	"hasDependency" : true
 }
