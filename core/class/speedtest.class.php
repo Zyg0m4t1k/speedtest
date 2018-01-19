@@ -94,12 +94,25 @@ class speedtest extends eqLogic {
 		$changed = false;	
 		$cmd = 'sudo speedtest' . $server . ' --share';
 		$cmd = exec($cmd,$results);
-		if (count($results) == 1) {
-			$changed = $eq->checkAndUpdateCmd('status', 0) || $changed;
-		} else {
+		log::add('speedtest','debug','############################################');
+		log::add('speedtest','debug','############################################');
+		log::add('speedtest','debug',print_r($results,true));
+		log::add('speedtest','debug','count: ' . count($results));
+		if (count($results) == 2) {
+			log::add('speedtest','debug','status 0');
+			$eq->checkAndUpdateCmd('status', 0);
+			$eq->checkAndUpdateCmd('speeddl', 0);
+			$eq->checkAndUpdateCmd('speedul', 0);
+			$eq->setConfiguration('image',$img);
+			$eq->save();
+			$eq->refreshWidget();
+			return;			
+						
+		} else {log::add('speedtest','debug','info : ' . $result);
+			log::add('speedtest','debug','status 1');
 			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
 		}
-		
+		log::add('speedtest','debug','foreach');
 		foreach ($results as $result) {
 			log::add('speedtest','debug','info : ' . $result);
 				if ($result[0] == '.') {
@@ -125,6 +138,8 @@ class speedtest extends eqLogic {
 				$changed = $eq->checkAndUpdateCmd('ping', $ping[1][0]) || $changed;
 			} 
 		};	
+		log::add('speedtest','debug','############################################');
+		log::add('speedtest','debug','############################################');
 		if ($changed) {
 			$eq->refreshWidget();
 		}		
@@ -242,6 +257,20 @@ class speedtest extends eqLogic {
 	
 	
 	public function toHtml($_version = 'dashboard') {
+		
+		$cmd = $this->getCmd(null, 'status');
+		if ($cmd->execCmd() == 1) {
+			$replace = $this->preToHtml($_version);
+			if (!is_array($replace)) {
+				return $replace;
+			}
+			$version = jeedom::versionAlias($_version);
+			$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
+			$refresh = $this->getCmd(null, 'refresh');
+			$replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';			  
+			return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
+			
+		}
 		
 		if ($this->getConfiguration('autAlt', 0) == 1) {			
 				$replace = $this->preToHtml($_version);
