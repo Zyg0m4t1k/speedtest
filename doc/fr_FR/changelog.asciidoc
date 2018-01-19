@@ -1,5 +1,7 @@
 ﻿[horizontal]
 
+18.01.2018:: Correction du bug sur le statut et chargement d'une image d'erreur si pas de connexion.
+
 16.01.2018:: Changement de commande pour meilleure compatibilité . Icone , changelog et graphique.
 
 15.09.2017:: Ajout du refresh .

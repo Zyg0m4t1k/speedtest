@@ -259,7 +259,7 @@ class speedtest extends eqLogic {
 	public function toHtml($_version = 'dashboard') {
 		
 		$cmd = $this->getCmd(null, 'status');
-		if ($cmd->execCmd() == 1) {
+		if ($cmd->execCmd() == 0) {
 			$replace = $this->preToHtml($_version);
 			if (!is_array($replace)) {
 				return $replace;
