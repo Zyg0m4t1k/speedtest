@@ -103,6 +103,7 @@ class speedtest extends eqLogic {
 			$eq->checkAndUpdateCmd('status', 0);
 			$eq->checkAndUpdateCmd('speeddl', 0);
 			$eq->checkAndUpdateCmd('speedul', 0);
+			$eq->checkAndUpdateCmd('ping', 0);
 			$eq->setConfiguration('image',$img);
 			$eq->save();
 			$eq->refreshWidget();
@@ -259,18 +260,6 @@ class speedtest extends eqLogic {
 	public function toHtml($_version = 'dashboard') {
 		
 		$cmd = $this->getCmd(null, 'status');
-		if ($cmd->execCmd() == 0) {
-			$replace = $this->preToHtml($_version);
-			if (!is_array($replace)) {
-				return $replace;
-			}
-			$version = jeedom::versionAlias($_version);
-			$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
-			$refresh = $this->getCmd(null, 'refresh');
-			$replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';			  
-			return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
-			
-		}
 		
 		if ($this->getConfiguration('autAlt', 0) == 1) {			
 				$replace = $this->preToHtml($_version);
@@ -280,7 +269,10 @@ class speedtest extends eqLogic {
 				$version = jeedom::versionAlias($_version);
 				$replace['#image#'] = $this->getConfiguration('image');
 				$refresh = $this->getCmd(null, 'refresh');
-				$replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';				
+				$replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';
+				if ($cmd->execCmd() == 0) {
+					$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
+				}
 				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
 		} elseif ($this->getConfiguration('autAltBeta', 0) == 1) {
 			
@@ -292,6 +284,9 @@ class speedtest extends eqLogic {
 			  $arr = parse_url($this->getConfiguration('image'));
 			  $url = 'https://beta.speedtest.net' . $arr['path'];
 			  $replace['#image#'] = $url;
+			  if ($cmd->execCmd() == 0) {
+				  $replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
+			  }			  
 			  $refresh = $this->getCmd(null, 'refresh');
 			  $replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';			  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
