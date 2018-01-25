@@ -82,9 +82,9 @@ class speedtest extends eqLogic {
 	public function getInfo($_options=false) {
 		
 		if ($_options != NULL) {
-			$eq = speedtest::byId($_options['speedtest_id']);	
+			$eq = self::byId($_options['speedtest_id']);	
 		} else {
-			$eq = speedtest::byId($this->getEqLogic_id());	
+			$eq = self::byId($this->getEqLogic_id());	
 		}
 		if ($eq->getConfiguration('server_id') != '') {
 			$server = ' --server ' . $eq->getConfiguration('server_id'); 
@@ -328,8 +328,9 @@ class speedtestCmd extends cmd {
 	
 	
     public function execute($_options = array()) {	
+		$server = speedtest::byId($this->getEqLogic_id());
 		if ($this->getLogicalId() == 'refresh') {
-			speedtest::getInfo();
+			$server->getInfo();
 		}		
 		 
     }
