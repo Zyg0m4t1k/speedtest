@@ -1,0 +1,45 @@
+{
+    "plugins\/speedtest\/desktop\/js\/speedtest.js": {
+        "Historiser": "Historiser",
+        "Afficher": "Afficher",
+        "Tester": "Tester"
+    },
+    "plugins\/speedtest\/desktop\/php\/speedtest.php": {
+        "Rechercher": "Rechercher",
+        "Equipements": "Equipements",
+        "Ajouter": "Ajouter",
+        "Configuration": "Configuration",
+        "Sauvegarder": "Sauvegarder",
+        "Supprimer": "Supprimer",
+        "Configuration avancée": "Configuration avancée",
+        "Equipement": "Equipement",
+        "Commandes": "Commandes",
+        "Nom de l'équipement speedtest": "Nom de l'équipement speedtest",
+        "Nom de l'équipement": "Nom de l'équipement",
+        "Objet parent": "Objet parent",
+        "Aucun": "Aucun",
+        "Catégorie": "Catégorie",
+        "Activer": "Activer",
+        "Visible": "Visible",
+        "Activer Cron": "Activer Cron",
+        "Fréquence de rafraichissement des données": "Fréquence de rafraichissement des données",
+        "Id serveur": "Id serveur",
+        "Liste des serveurs": "Liste des serveurs",
+        "Widget alternatif": "Widget alternatif",
+        "Widget Betâ": "Widget Betâ",
+        "Id": "Id",
+        "Nom": "Nom",
+        "Options": "Options",
+        "Actions": "Actions",
+        "Gestion": "Gestion",
+        "Mes Equipements": "Mes Equipements"
+    },
+    "plugins\/speedtest\/plugin_info\/configuration.php": {
+        "Droits Sudo : ": "Droits Sudo : ",
+        "Check adresse Ip": "Check adresse Ip",
+        "Adresse IP": "Adresse IP"
+    },
+    "plugins\/speedtest\/core\/ajax\/speedtest.ajax.php": {
+        "401 - Accès non autorisé": "401 - Accès non autorisé"
+    }
+}

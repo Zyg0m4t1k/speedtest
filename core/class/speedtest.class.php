@@ -19,17 +19,10 @@
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
-
 class speedtest extends eqLogic {
 	
 	public static $_widgetPossibility = array('custom' => true);
 
-    public static function pull($_option) {
-
-    }
-	
-	
-	
 	public static function dependancy_info() {
 		$return = array();
 		$return['log'] = __CLASS__ . '_update';
@@ -144,26 +137,20 @@ class speedtest extends eqLogic {
 		if ($changed) {
 			$eq->refreshWidget();
 		}		
-					
 	}
 	
-	
-
     public function preUpdate() {
         if ($this->getConfiguration('autAlt', 0) == 1 && $this->getConfiguration('autAltBeta', 0) == 1) {
             throw new Exception(__('Il ne faut sélectionner qu\'un widget', __FILE__));
         }
 	}    
 	
-	
 	public function postUpdate() {
 		$speedDl = $this->getCmd(null, 'speeddl');
 		if (!is_object($speedDl)) {
 			$speedDl = new speedtestCmd();
 			$speedDl->setName(__('Download', __FILE__));
-							
 		}
-		
 		$speedDl->setLogicalId('speeddl');
 		$speedDl->setEqLogic_id($this->getId());
 		$speedDl->setType('info');
@@ -191,7 +178,6 @@ class speedtest extends eqLogic {
 		if (!is_object($ping)) {
 			$ping = new speedtestCmd();
 			$ping->setName(__('Ping', __FILE__));
-							
 		}
 		$ping->setLogicalId('ping');
 		$ping->setEqLogic_id($this->getId());
@@ -206,7 +192,6 @@ class speedtest extends eqLogic {
 		if (!is_object($status)) {
 			$status = new speedtestCmd();
 			$status->setName(__('Etat', __FILE__));
-							
 		}
 		$status->setLogicalId('status');
 		$status->setEqLogic_id($this->getId());
@@ -218,34 +203,29 @@ class speedtest extends eqLogic {
 		if (!is_object($refresh)) {
 			$refresh = new speedtestCmd();
 			$refresh->setName(__('Rafraichir', __FILE__));
-							
 		}
 		$refresh->setLogicalId('refresh');
 		$refresh->setEqLogic_id($this->getId());
 		$refresh->setType('action');
 		$refresh->setSubType('other');
 		$refresh->save(); 
-		
-		 if ($this->getIsEnable() == 1 && $this->getConfiguration('autCron', 0) == 1 ) {
-			 $cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId()))); 
-					if (!is_object($cron)) {
-						$cron = new cron();
-						$cron->setClass('speedtest');
-						$cron->setFunction('getInfo');
-						$cron->setOption(array('speedtest_id' => intval($this->getId())));
-					}
-					$cron->setSchedule($this->getConfiguration('refreshCron'));
-					$cron->save();			
-					
-					
-		 } else {
-			 $cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
-			 if (is_object($cron)) {
-				 $cron->remove();
-			 }
-		 }
-					
-						
+
+		if ($this->getIsEnable() == 1 && $this->getConfiguration('autCron', 0) == 1 ) {
+			$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId()))); 
+			if (!is_object($cron)) {
+				$cron = new cron();
+				$cron->setClass('speedtest');
+				$cron->setFunction('getInfo');
+				$cron->setOption(array('speedtest_id' => intval($this->getId())));
+			}
+			$cron->setSchedule($this->getConfiguration('refreshCron'));
+			$cron->save();			
+		} else {
+			$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
+			if (is_object($cron)) {
+				$cron->remove();
+			}
+		}
     }
 
 	public function preRemove() {
@@ -253,14 +233,11 @@ class speedtest extends eqLogic {
 	   if (is_object($cron)) {
 		   $cron->remove();
 	   }		
-
 	}
-	
 	
 	public function toHtml($_version = 'dashboard') {
 		
 		$cmd = $this->getCmd(null, 'status');
-		
 		if ($this->getConfiguration('autAlt', 0) == 1) {			
 				$replace = $this->preToHtml($_version);
 				if (!is_array($replace)) {
@@ -268,14 +245,11 @@ class speedtest extends eqLogic {
 				}
 				$version = jeedom::versionAlias($_version);
 				$replace['#image#'] = $this->getConfiguration('image');
-				$refresh = $this->getCmd(null, 'refresh');
-				$replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';
 				if ($cmd->execCmd() == 0) {
 					$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
 				}
 				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
 		} elseif ($this->getConfiguration('autAltBeta', 0) == 1) {
-			
 			  $replace = $this->preToHtml($_version);
 			  if (!is_array($replace)) {
 				  return $replace;
@@ -286,53 +260,25 @@ class speedtest extends eqLogic {
 			  $replace['#image#'] = $url;
 			  if ($cmd->execCmd() == 0) {
 				  $replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
-			  }			  
-			  $refresh = $this->getCmd(null, 'refresh');
-			  $replace['#refresh_id#'] = is_object($refresh) ? $refresh->getId() : '';			  
+			  }			  		  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
 		}else {
-			$replace = $this->preToHtml($_version);
-			if (!is_array($replace)) {
-				return $replace;
-			}
-			$version = jeedom::versionAlias($_version);
-			$cmd_html = '';
-			$br_before = 0;
-			foreach ($this->getCmd(null, null, true) as $cmd) {
-				if (isset($replace['#refresh_id#']) && $cmd->getId() == $replace['#refresh_id#']) {
-					continue;
-				}
-				if ($br_before == 0 && $cmd->getDisplay('forceReturnLineBefore', 0) == 1) {
-					$cmd_html .= '<br/>';
-				}
-				$cmd_html .= $cmd->toHtml($_version, '', $replace['#cmd-background-color#']);
-				$br_before = 0;
-				if ($cmd->getDisplay('forceReturnLineAfter', 0) == 1) {
-					$cmd_html .= '<br/>';
-					$br_before = 1;
-				}
-			}
-			$replace['#cmd#'] = $cmd_html;
-			return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'eqLogic')));			
+			  return parent::toHtml($_version);		
 		}
 	}
-
-	public function dontRemoveCmd() {
-		return true;
-	}	
-	
-
 }
 
 class speedtestCmd extends cmd {
 	
+	public function dontRemoveCmd() {
+		return true;
+	}	
 	
     public function execute($_options = array()) {	
 		$server = speedtest::byId($this->getEqLogic_id());
 		if ($this->getLogicalId() == 'refresh') {
 			$server->getInfo();
 		}		
-		 
     }
 }
 
