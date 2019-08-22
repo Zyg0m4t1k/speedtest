@@ -102,7 +102,7 @@ class speedtest extends eqLogic {
 			$eq->refreshWidget();
 			return;			
 						
-		} else {
+		} else {log::add('speedtest','debug','info : ' . $result);
 			log::add('speedtest','debug','status 1');
 			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
 		}
@@ -263,11 +263,7 @@ class speedtest extends eqLogic {
 			  }			  		  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
 		}else {
-<<<<<<< HEAD
-			parent::toHtml($_version);		
-=======
 			  return parent::toHtml($_version);		
->>>>>>> 12ae783ea2f73e9244236479bbe3e254589561a7
 		}
 	}
 }
@@ -287,4 +283,3 @@ class speedtestCmd extends cmd {
 }
 
 ?>
-
