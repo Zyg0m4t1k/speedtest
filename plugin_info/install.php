@@ -21,10 +21,9 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 
 function speedtest_update() {
-
-		log::add('speedtest', 'error', '!!! Voir le changelog et doc pour les changements!!!');
-
-    
+	 foreach (speedtest::byType('speedtest') as $speedtest) {
+		 $speedtest->save();		 
+	 }	
 }
 
 
