@@ -4,7 +4,7 @@ if (!isConnect('admin')) {
 }
 sendVarToJS('eqType', 'speedtest');
 $eqLogics = eqLogic::byType('speedtest');
-$plugin = plugin::byId('Pingserver');
+$plugin = plugin::byId('speedtest');
 ?>
 
 <div class="row row-overflow">
