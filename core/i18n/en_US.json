@@ -1,0 +1,45 @@
+{
+    "plugins\/speedtest\/desktop\/js\/speedtest.js": {
+        "Historiser": "Historize",
+        "Afficher": "Display",
+        "Tester": "Test"
+    },
+    "plugins\/speedtest\/desktop\/php\/speedtest.php": {
+        "Rechercher": "Search",
+        "Equipements": "Devices",
+        "Ajouter": "Add",
+        "Configuration": "Setup",
+        "Sauvegarder": "Save",
+        "Supprimer": "Delete",
+        "Configuration avancée": "Advanced configuration",
+        "Equipement": "Device",
+        "Commandes": "Commands",
+        "Nom de l'équipement speedtest": "Speedtest device name",
+        "Nom de l'équipement": "Device name",
+        "Objet parent": "Parent object",
+        "Aucun": "None",
+        "Catégorie": "Category",
+        "Activer": "Enable",
+        "Visible": "Visible",
+        "Activer Cron": "Enable cron",
+        "Fréquence de rafraichissement des données": "Data refresh frequency",
+        "Id serveur": "Server Id",
+        "Liste des serveurs": "List of servers",
+        "Widget alternatif": "Alternative widget",
+        "Widget Betâ": "Beta widget",
+        "Id": "Id",
+        "Nom": "Name",
+        "Options": "Options",
+        "Actions": "Actions",
+        "Gestion": "Management",
+        "Mes Equipements": "My devices"
+    },
+    "plugins\/speedtest\/plugin_info\/configuration.php": {
+        "Droits Sudo : ": "Sudo rights:",
+        "Check adresse Ip": "IP address check",
+        "Adresse IP": "IP address"
+    },
+    "plugins\/speedtest\/core\/ajax\/speedtest.ajax.php": {
+        "401 - Accès non autorisé": "401 - Unauthorized Access"
+    }
+}

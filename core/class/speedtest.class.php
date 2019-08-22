@@ -263,7 +263,11 @@ class speedtest extends eqLogic {
 			  }			  		  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
 		}else {
+<<<<<<< HEAD
 			parent::toHtml($_version);		
+=======
+			  return parent::toHtml($_version);		
+>>>>>>> 12ae783ea2f73e9244236479bbe3e254589561a7
 		}
 	}
 }
