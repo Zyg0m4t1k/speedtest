@@ -102,11 +102,10 @@ class speedtest extends eqLogic {
 			$eq->refreshWidget();
 			return;			
 						
-		} else {log::add('speedtest','debug','info : ' . $result);
+		} else {
 			log::add('speedtest','debug','status 1');
 			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
 		}
-		log::add('speedtest','debug','foreach');
 		foreach ($results as $result) {
 			log::add('speedtest','debug','info : ' . $result);
 				if ($result[0] == '.') {
