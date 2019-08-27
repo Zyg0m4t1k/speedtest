@@ -1,3 +1,11 @@
+*-08-2019
+===
+
+- Bugfix
+- Fix widgets
+- Fix php 7.3
+- change fa to fas
+
 18-01-2018
 ===
 
