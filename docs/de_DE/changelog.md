@@ -1,4 +1,9 @@
-*-08-2019
+03-09-2019
+===
+
+- Fix widgets (dashboard,mobile)
+
+XX-08-2019
 ===
 
 - Bugfix
