@@ -31,7 +31,7 @@ if (!isConnect('admin')) {
     if (exec('sudo cat /etc/sudoers') != "") {
         echo '<div class="col-lg-1"><span class="label label-success">OK</span></div>';
     } else {
-        echo '<div class="col-lg-1"><span class="label label-danger">NOK</span>    <span><a href="http://doc.jeedom.fr/fr_FR/doc-installation.html#troubleshoting"><i class="fa fa-question-circle"></i></a></span></div>';
+        echo '<div class="col-lg-1"><span class="label label-danger">NOK</span>    <span><a href="https://jeedom.github.io/documentation/"><i class="fas fa-question-circle"></i></a></span></div>';
     }
     ?>
     </div>
@@ -44,7 +44,7 @@ if (!isConnect('admin')) {
             </div>
      </div>    
    <div class="form-group">
-    <label  class="col-sm-2 control-label">{{Adresse IP}}</label>
+    <label  class="col-lg-1 control-label">{{Adresse IP}}</label>
     <div class="col-sm-3">
      <input class="configKey form-control" data-l1key="ipkey" disabled />
    </div>

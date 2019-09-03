@@ -19,7 +19,7 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function speedtest_update() {
-	 foreach (speedtest::byType('speedtest') as $speedtest) {
+	 foreach (speedtest::byType('speedtest',true) as $speedtest) {
 		 $speedtest->save();		 
 	 }	
 }
