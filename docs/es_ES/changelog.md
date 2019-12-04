@@ -1,3 +1,11 @@
+04.11.2019
+===
+
+- Changement pour la v4 de jeedom seulement - Pas de changements majeurs par rapport à la V3
+- Mise à jour widget
+- Confirmation compatibilité v4/buster
+
+
 03-09-2019
 ===
 
