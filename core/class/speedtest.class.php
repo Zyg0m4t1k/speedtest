@@ -149,27 +149,27 @@ class speedtest extends eqLogic {
 		if (!is_object($speedDl)) {
 			$speedDl = new speedtestCmd();
 			$speedDl->setName(__('Download', __FILE__));
+			$speedDl->setTemplate('dashboard', 'line');
+			$speedDl->setTemplate('mobile', 'line');	
 		}
 		$speedDl->setLogicalId('speeddl');
 		$speedDl->setEqLogic_id($this->getId());
 		$speedDl->setType('info');
-		$speedDl->setSubType('numeric');
-	    $speedDl->setTemplate('dashboard', 'line');
-		$speedDl->setTemplate('mobile', 'line');		
+		$speedDl->setSubType('numeric');	
 		$speedDl->setUnite('Mbit/s');
 		$speedDl->save(); 			
 		
 		$speedul = $this->getCmd(null, 'speedul');
 		if (!is_object($speedul)) {
 			$speedul = new speedtestCmd();
-			$speedul->setName(__('Upload', __FILE__));					
+			$speedul->setName(__('Upload', __FILE__));	
+			$speedul->setTemplate('dashboard', 'line');
+			$speedul->setTemplate('mobile', 'line');
 		}
 		$speedul->setLogicalId('speedul');
 		$speedul->setEqLogic_id($this->getId());
 		$speedul->setType('info');
-		$speedul->setSubType('numeric');
-	    $speedul->setTemplate('dashboard', 'line');
-		$speedul->setTemplate('mobile', 'line');		
+		$speedul->setSubType('numeric');		
 		$speedul->setUnite('Mbit/s');
 		$speedul->save(); 
 		
@@ -177,13 +177,13 @@ class speedtest extends eqLogic {
 		if (!is_object($ping)) {
 			$ping = new speedtestCmd();
 			$ping->setName(__('Ping', __FILE__));
+			$speedul->setTemplate('dashboard', 'line');
+			$speedul->setTemplate('mobile', 'line');
 		}
 		$ping->setLogicalId('ping');
 		$ping->setEqLogic_id($this->getId());
 		$ping->setType('info');
-		$ping->setSubType('numeric');
-	    $ping->setTemplate('dashboard', 'line');
-		$ping->setTemplate('mobile', 'line');		
+		$ping->setSubType('numeric');	
 		$ping->setUnite('ms');
 		$ping->save(); 
 		
