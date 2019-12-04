@@ -1,4 +1,4 @@
-<?php
+s<?php
 
 /* This file is part of Jeedom.
  *
@@ -154,8 +154,6 @@ class speedtest extends eqLogic {
 		$speedDl->setEqLogic_id($this->getId());
 		$speedDl->setType('info');
 		$speedDl->setSubType('numeric');
-	    $speedDl->setTemplate('dashboard', 'line');
-		$speedDl->setTemplate('mobile', 'line');		
 		$speedDl->setUnite('Mbit/s');
 		$speedDl->save(); 			
 		
@@ -168,8 +166,6 @@ class speedtest extends eqLogic {
 		$speedul->setEqLogic_id($this->getId());
 		$speedul->setType('info');
 		$speedul->setSubType('numeric');
-	    $speedul->setTemplate('dashboard', 'line');
-		$speedul->setTemplate('mobile', 'line');		
 		$speedul->setUnite('Mbit/s');
 		$speedul->save(); 
 		
@@ -182,8 +178,6 @@ class speedtest extends eqLogic {
 		$ping->setEqLogic_id($this->getId());
 		$ping->setType('info');
 		$ping->setSubType('numeric');
-	    $ping->setTemplate('dashboard', 'line');
-		$ping->setTemplate('mobile', 'line');		
 		$ping->setUnite('ms');
 		$ping->save(); 
 		
