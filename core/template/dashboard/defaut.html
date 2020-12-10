@@ -1,4 +1,4 @@
-<div class="eqLogic eqLogic-widget allowResize" style="width: #width#;height: #height#;#style#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="#version#" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" >
+<div class="eqLogic eqLogic-widget allowResize #eqType#" style="width: #width#;height: #height#;#style#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="#version#" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" >
 	<center class="widget-name">
 		<span class="warning" title="#alert_name#">
 			<i class='#alert_icon#'></i>
@@ -23,7 +23,12 @@
 		}
     </script>    
  </div>
- 
+ <style>
+	 .#eqType# img {
+		 width: calc(#width# - 10px) !important;
+	 }
+
+</style>
 
 
 

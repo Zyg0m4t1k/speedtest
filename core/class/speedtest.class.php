@@ -229,31 +229,22 @@ class speedtest extends eqLogic {
 	}
 	
 	public function toHtml($_version = 'dashboard') {
-		
 		$cmd = $this->getCmd(null, 'status');
+		$replace = $this->preToHtml($_version);
+		if (!is_array($replace)) {
+			return $replace;
+		}
+		if ($cmd->execCmd() == 0) {
+			$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
+		}		
+		$version = jeedom::versionAlias($_version);		
 		if ($this->getConfiguration('autAlt', 0) == 1) {			
-				$replace = $this->preToHtml($_version);
-				if (!is_array($replace)) {
-					return $replace;
-				}
-				$version = jeedom::versionAlias($_version);
 				$replace['#image#'] = $this->getConfiguration('image');
-				if ($cmd->execCmd() == 0) {
-					$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
-				}
 				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
 		} elseif ($this->getConfiguration('autAltBeta', 0) == 1) {
-			  $replace = $this->preToHtml($_version);
-			  if (!is_array($replace)) {
-				  return $replace;
-			  }
-			  $version = jeedom::versionAlias($_version);
 			  $arr = parse_url($this->getConfiguration('image'));
 			  $url = 'https://beta.speedtest.net' . $arr['path'];
-			  $replace['#image#'] = $url;
-			  if ($cmd->execCmd() == 0) {
-				  $replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
-			  }			  		  
+			  $replace['#image#'] = $url;		  		  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
 		}else {
 			  return parent::toHtml($_version);		
