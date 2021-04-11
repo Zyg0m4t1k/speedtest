@@ -27,6 +27,7 @@ class speedtest extends eqLogic {
 		$return = array();
 		$return['log'] = __CLASS__ . '_update';
 		$return['progress_file'] = jeedom::getTmpFolder(__CLASS__) . '/dependance';
+		$return['state'] = 'nok';
 		try {
 			$pip = com_shell::execute(system::getCmdSudo() . 'which pip');
 		} catch (Exception $exc) {
@@ -34,14 +35,19 @@ class speedtest extends eqLogic {
 			$return['state'] = 'nok';
 			return $return;
 		}	
-		$pip = rtrim($pip);		
-		$list = com_shell::execute(system::getCmdSudo() . $pip . ' list'); 
-		if (!preg_match('/speedtest-cli 2.1.3/', $list)) {
-			$return['state'] = 'nok';	
-		} else {
-			$return['state'] = 'ok';
+		$pip = rtrim($pip);	
+		try {
+			$list = com_shell::execute(system::getCmdSudo() . $pip . ' show speedtest-cli'); 
+			$lines = explode(PHP_EOL, $list);
+			foreach ($lines as $line) {
+				if ($line == 'Version: 2.1.3') {
+					$return['state'] = 'ok';		
+				}
+			}		
+			return $return;			
+		} catch(Exception $exc) {
+			return $return;
 		}
-		return $return;
 	}
 	
     public static function dependancy_install() {
