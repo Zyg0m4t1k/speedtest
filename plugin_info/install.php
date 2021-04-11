@@ -24,4 +24,13 @@ function speedtest_update() {
 	 }	
 }
 
+function speedtest_remove() {
+    $crons = cron::searchClassAndFunction('speedtest','getInfo');
+    foreach($crons as $cron) {    
+        if(is_object($cron)) {
+            $cron->remove();
+        }  
+    }
+}
+
 ?>
