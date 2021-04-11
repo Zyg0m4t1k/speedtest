@@ -27,8 +27,8 @@ class speedtest extends eqLogic {
 		$return = array();
 		$return['log'] = __CLASS__ . '_update';
 		$return['progress_file'] = '/tmp/dependancy_speedtest_in_progress';
-		$version = com_shell::execute(system::getCmdSudo() . 'speedtest-cli --v'); 
-		if (!preg_match('/speedtest-cli 2.1.3/', $version)) {
+		$list = com_shell::execute(system::getCmdSudo() . 'pip list'); 
+		if (!preg_match('/speedtest-cli 2.1.3/', $list)) {
 			$return['state'] = 'nok';	
 		} else {
 			$return['state'] = 'ok';
