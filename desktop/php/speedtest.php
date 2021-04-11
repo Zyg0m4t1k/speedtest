@@ -117,6 +117,13 @@ $plugin = plugin::byId('speedtest');
 							</div>
 						</div>                     	
 					</div>
+<!--					<div class="form-group">
+						<label class="col-md-2 control-label">{{Arch}}</label>
+						<div class="col-md-1">
+							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="arch" placeholder="Server id" disabled/>
+						</div>       
+					</div> 
+					<br/> 					
 					<div class="form-group">
 						<label class="col-md-2 control-label">{{Id serveur}}</label>
 						<div class="col-md-1">
@@ -125,7 +132,7 @@ $plugin = plugin::byId('speedtest');
 						<div class="col-md-1"> 
 							<label class=" ontrol-label" ><a style="text-decoration: underline"  href="http://www.speedtestserver.com/">{{Liste des serveurs}}</a></label>  
 						</div>       
-					</div> 
+					</div> -->
 					<br/>                        
 					<div class="form-group">
 						<label class="col-md-2 control-label">{{Widget alternatif}}</label>

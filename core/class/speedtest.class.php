@@ -26,8 +26,16 @@ class speedtest extends eqLogic {
 	public static function dependancy_info() {
 		$return = array();
 		$return['log'] = __CLASS__ . '_update';
-		$return['progress_file'] = '/tmp/dependancy_speedtest_in_progress';
-		$list = com_shell::execute(system::getCmdSudo() . 'pip list'); 
+		$return['progress_file'] = jeedom::getTmpFolder(__CLASS__) . '/dependance';
+		try {
+			$pip = com_shell::execute(system::getCmdSudo() . 'which pip');
+		} catch (Exception $exc) {
+			log::add('switchbot', 'debug', 'Impossible de trouver pip ' . $exc);
+			$return['state'] = 'nok';
+			return $return;
+		}	
+		$pip = rtrim($pip);		
+		$list = com_shell::execute(system::getCmdSudo() . $pip . ' list'); 
 		if (!preg_match('/speedtest-cli 2.1.3/', $list)) {
 			$return['state'] = 'nok';	
 		} else {
@@ -36,12 +44,10 @@ class speedtest extends eqLogic {
 		return $return;
 	}
 	
-	public static function dependancy_install() {
-		log::remove(__CLASS__ . '_update');
-		$cmd = 'sudo /bin/bash ' .dirname(__FILE__) . '/../../resources/install.sh';
-		$cmd .= ' >> ' . log::getPathToLog(__CLASS__ . '_update') . ' 2>&1 &';
-		exec($cmd);		
-	}
+    public static function dependancy_install() {
+        log::remove(__CLASS__ . '_update');
+		return array('script' => __DIR__ . '/../../resources/install.sh ' . jeedom::getTmpFolder(__CLASS__) . '/dependance','log' => log::getPathToLog(__CLASS__ . '_update'));
+    }
 	
 	public static function cronHourly() {
 		$getIp = config::byKey('checkIp', 'speedtest', 0);
@@ -80,13 +86,8 @@ class speedtest extends eqLogic {
 		} else {
 			$eq = speedtest::byId($this->getId());	
 		}
-		if ($eq->getConfiguration('server_id') != '') {
-			$server = ' --server ' . $eq->getConfiguration('server_id'); 
-		} else {
-			$server = '';
-		}
 		$changed = false;	
-		$cmd = 'sudo speedtest' . $server . ' --share';
+		$cmd = 'sudo speedtest --share';
 		$cmd = exec($cmd,$results);
 		log::add('speedtest','debug','############################################');
 		log::add('speedtest','debug','############################################');
@@ -143,8 +144,34 @@ class speedtest extends eqLogic {
         if ($this->getConfiguration('autAlt', 0) == 1 && $this->getConfiguration('autAltBeta', 0) == 1) {
             throw new Exception(__('Il ne faut sélectionner qu\'un widget', __FILE__));
         }
-	}    
+	}  
 	
+//	public function preSave() {
+//		$arch = com_shell::execute(system::getCmdSudo() . 'dpkg --print-architecture'); 
+//		switch ($arch) {
+//			case 'i386':
+//				$this->setConfiguration('arch', $arch);
+//				break;
+//			case 'x86_64':
+//				$this->setConfiguration('arch', $arch);
+//				break;
+//			case 'aarch64':
+//				$this->setConfiguration('arch', $arch);
+//				break;
+//			case 'arm':
+//				$this->setConfiguration('arch', $arch);
+//				break;
+//			case 'armhf':
+//				$this->setConfiguration('arch', $arch);
+//				break;
+//			case strpos('64', $arch) >= 0:
+//				$this->setConfiguration('arch', 'aarch64');
+//				break;
+//			default:
+//				log::add('speedtest','debug','Architecture non trouvée : ' . $arch);
+//		}
+//	}
+//	
 	public function postUpdate() {
 		$speedDl = $this->getCmd(null, 'speeddl');
 		if (!is_object($speedDl)) {
