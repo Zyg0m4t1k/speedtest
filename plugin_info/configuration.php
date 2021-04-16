@@ -25,65 +25,40 @@ if (!isConnect('admin')) {
 
 <form class="form-horizontal">
 	<fieldset>
-    <div class="form-group">
-    <label class="col-lg-1 control-label">{{Droits Sudo : }}</label>
-    <?php
-    if (exec('sudo cat /etc/sudoers') != "") {
-        echo '<div class="col-lg-1"><span class="label label-success">OK</span></div>';
-    } else {
-        echo '<div class="col-lg-1"><span class="label label-danger">NOK</span>    <span><a href="https://jeedom.github.io/documentation/"><i class="fas fa-question-circle"></i></a></span></div>';
-    }
-    ?>
-    </div>
-    </br>    
-    
-	 <div class="form-group">
-            <label class="col-lg-1 control-label">{{Check adresse Ip}}</label>
-            <div class="col-sm-3">
-                <input type="checkbox" class="configKey" data-l1key="checkIp" />
-            </div>
-     </div>    
-   <div class="form-group">
-    <label  class="col-lg-1 control-label">{{Adresse IP}}</label>
-    <div class="col-sm-3">
-     <input class="configKey form-control" data-l1key="ipkey" disabled />
-   </div>
- </div>
- 
- 
-</fieldset>
+		<div class="form-group">
+			<label class="col-md-1 control-label">{{Bétâ}}</label>
+			<div class="col-md-1">
+				<input type="checkbox" class="configKey" data-l1key="useArch" />
+			</div>
+			<label class="col-md-1 control-label" >{{Arch}}</label>
+			<div class="col-md-1">
+					<input class="configKey" data-l1key="arch"  />
+			</div>
+		</div>		
+		<div class="form-group">
+			<label class="col-lg-1 control-label">{{Droits Sudo : }}</label>
+			<?php
+			if ( exec( 'sudo cat /etc/sudoers' ) != "" ) {
+				echo '<div class="col-lg-1"><span class="label label-success">OK</span></div>';
+			} else {
+				echo '<div class="col-lg-1"><span class="label label-danger">NOK</span>    <span><a href="https://jeedom.github.io/documentation/"><i class="fas fa-question-circle"></i></a></span></div>';
+			}
+			?>
+		</div>
+		</br>
+		<div class="form-group">
+			<label class="col-lg-1 control-label">{{Check adresse Ip}}</label>
+			<div class="col-sm-3">
+				<input type="checkbox" class="configKey" data-l1key="checkIp"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-1 control-label">{{Adresse IP}}</label>
+			<div class="col-sm-3">
+				<input class="configKey form-control" data-l1key="ipkey" />
+			</div>
+		</div>
+	</fieldset>
 </form>
-<script>
 
-	$('.configKey[data-l1key=checkIp]').change(function () {
-		 if(this.checked) {
-			$.ajax({// fonction permettant de faire de l'ajax
-				type: "POST", // methode de transmission des données au fichier php
-				url: "plugins/speedtest/core/ajax/speedtest.ajax.php", // url du fichier php
-				data: {
-					action: "getIp"
-				},
-				dataType: 'json',
-				error: function (request, status, error) {
-					handleAjaxError(request, status, error);
-				},
-				success: function (data) { // si l'appel a bien fonctionné
-					if (data.state != 'ok') {
-						$('#div_alert').showAlert({message: data.result, level: 'danger'});
-						return;
-					}
-					console.log(data.result);
-					$('.configKey[data-l1key=ipkey]').empty().val(data.result);
-					savePluginConfig();
-				}
-			});				 
-			 
-		 } else {
-			  $('.configKey[data-l1key=ipkey]').empty().val('');
-			  savePluginConfig();
-		 }
-		 
-	});	
-
-</script>
-
+<?php include_file('desktop', 'configuration', 'js', 'speedtest');?>

@@ -15,75 +15,67 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
  
- 
- 
-$("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true});
+$("#table_cmd").sortable({
+	axis: "y",
+	cursor: "move",
+	items: ".cmd",
+	placeholder: "ui-state-highlight",
+	tolerance: "intersect",
+	forcePlaceholderSize: true
+	}
+);
 
-
-
-
-$("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=autCron]", 'change ').delegate('.eqLogicAttr[data-l1key=configuration][data-l2key=autCron]','change ', function () {
-    if ($(this).value() == 1) {
-        $('#cron_speedtest').show();
-    } else {
-        $('#cron_speedtest').hide();
-    }
+$("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=autCron]", 'change ').delegate('.eqLogicAttr[data-l1key=configuration][data-l2key=autCron]', 'change ', function () {
+	$(this).value() == 1 ? $('#cron_speedtest').show() : $('#cron_speedtest').hide();
 });
 
-
-$('#bt_cronGenerator').on('click',function(){
-    jeedom.getCronSelectModal({},function (result) {
-        $('.eqLogicAttr[data-l1key=configuration][data-l2key=refreshCron]').value(result.value);
-    });
+$("body").undelegate(".eqLogicAttr[data-l1key=configuration][data-l2key=useArch]", 'change ').delegate('.eqLogicAttr[data-l1key=configuration][data-l2key=useArch]', 'change ', function () {
+	$(this).value() == 1 ? $('.official').show() : $('.official').hide();
 });
 
- function printEqLogic(_eqLogic) {
-		if (isset(_eqLogic.configuration)) {
-			  if (isset(_eqLogic.configuration.autCron)) {	
-				if  (_eqLogic.configuration.autCron == 0) {
-					$('#cron_speedtest').hide();
-				} else {
-					$('#cron_speedtest').show();
-				}
-			  } else {
-					$('#cron_speedtest').hide();
-			  }
+$('#bt_cronGenerator').on('click', function () {
+	jeedom.getCronSelectModal({}, function (result) {
+		$('.eqLogicAttr[data-l1key=configuration][data-l2key=refreshCron]').value(result.value);
+	});
+});
+
+function printEqLogic(_eqLogic) {
+	$('#cron_speedtest').hide();
+	$('.official').hide();
+	if (isset(_eqLogic.configuration)) {
+		if (isset(_eqLogic.configuration.autCron)) {
+			_eqLogic.configuration.autCron == 0 ? $('#cron_speedtest').hide() : $('#cron_speedtest').show();
 		}
- }
+		if (isset(_eqLogic.configuration.useArch)) {
+			_eqLogic.configuration.useArch == 0 ? $('.official').hide() : $('.official').show();
+		}		
+	}
+}
 
 function addCmdToTable(_cmd) {
-    if (!isset(_cmd)) {
-        var _cmd = {};
-    }
-     if (!isset(_cmd.configuration)) {
-        _cmd.configuration = {};
-    }           
-
-            
-			
-		var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
-			tr += '<td>';
-			tr += '<span class="cmdAttr" data-l1key="id" ></span>';
-			tr += '</td>';
-			tr += '<td>' + _cmd.name + '</td>'; 
-			tr += '<td>';
-		
-			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
-			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';			
-			tr += '</td>';
-			tr += '<td>';
-			if (is_numeric(_cmd.id)) {
-				tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fas fa-cogs"></i></a> ';
-				tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fas fa-rss"></i> {{Tester}}</a>';
-			}
-			tr += '<i class="fas fa-minus-circle pull-right cmdAction cursor" data-action="remove"></i></td>';
-			tr += '</tr>';
-			$('#table_cmd tbody').append(tr);
-			$('#table_cmd tbody tr:last').setValues(_cmd, '.cmdAttr');
-            
-} 
-
-
-
-
-
+	if (!isset(_cmd)) {
+		var _cmd = {};
+	}
+	if (!isset(_cmd.configuration)) {
+		_cmd.configuration = {};
+	}
+	var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
+	tr += '<td>';
+	tr += '<span class="cmdAttr" data-l1key="id" ></span>';
+	tr += '</td>';
+	tr += '<td>' + _cmd.name + '</td>';
+	tr += '<td>';
+	tr += '<input class="cmdAttr form-control input-sm" data-l1key="unite" placeholder="Unité" title="{{Unité}}" style="width:30%;display:inline-block;margin-left:2px;">';	
+	tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
+	tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
+	tr += '</td>';
+	tr += '<td>';
+	if (is_numeric(_cmd.id)) {
+		tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fas fa-cogs"></i></a> ';
+		tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fas fa-rss"></i> {{Tester}}</a>';
+	}
+	tr += '<i class="fas fa-minus-circle pull-right cmdAction cursor" data-action="remove"></i></td>';
+	tr += '</tr>';
+	$('#table_cmd tbody').append(tr);
+	$('#table_cmd tbody tr:last').setValues(_cmd, '.cmdAttr');
+}

@@ -17,7 +17,7 @@
  */
 
 /* * ***************************Includes********************************* */
-require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
+require_once __DIR__ . '/../../../../core/php/core.inc.php';
 
 class speedtest extends eqLogic {
 	
@@ -31,7 +31,7 @@ class speedtest extends eqLogic {
 		try {
 			$pip = com_shell::execute(system::getCmdSudo() . 'which pip');
 		} catch (Exception $exc) {
-			log::add('switchbot', 'debug', 'Impossible de trouver pip ' . $exc);
+			log::add(__CLASS__, 'debug', 'Impossible de trouver pip ' . $exc);
 			$return['state'] = 'nok';
 			return $return;
 		}	
@@ -60,7 +60,7 @@ class speedtest extends eqLogic {
 		if ($getIp == 1 && config::byKey('ipkey', 'speedtest') != '' ) {
 			$ip = self::getIp();
 			if ($ip != config::byKey('ipkey', 'speedtest')) {
-				log::add('speedtest', 'error', 'Changement d\'ip :' . $ip);
+				log::add(__CLASS__, 'error', 'Changement d\'ip :' . $ip);
 				config::save('ipkey',$ip,'speedtest') ;
 			} 
 		}
@@ -80,27 +80,68 @@ class speedtest extends eqLogic {
 			}
 		}
 		if(!$check) {
-			log::add('speedtest', 'error', '!!! Impossible de détecter l\'adresse IP !!!');	
+			log::add(__CLASS__, 'error', '!!! Impossible de détecter l\'adresse IP !!!');	
 			return false;	
 		}
 	}
 	
-	public function getInfo($_options=false) {
-		
+	public function getInfoOkla($_options=false) {
 		if ($_options != NULL) {
-			$eq = speedtest::byId($_options['speedtest_id']);	
+			$eq = eqLogic::byId($_options['speedtest_id']);	
 		} else {
-			$eq = speedtest::byId($this->getId());	
+			$eq = $this;
+		} 
+		$cmd = $eq->createCommand();
+		try {
+			$result = com_shell::execute(system::getCmdSudo() . $cmd);
+			$lines = explode(PHP_EOL, $result);
+			foreach ($lines as $line) {
+				if(preg_match('#Latency:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
+					$ping = $m[1];
+				}			
+				if(preg_match('#Download:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
+					$download = $m[1];
+				}
+				if(preg_match('#Upload:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
+					$upload = $m[1];
+				}
+				if(preg_match('#Result URL:\s{1,}(.*)#',$line,$m)) {
+					$img = trim($m[1]) . '.png';
+				}	
+			}
+			$eq->checkAndUpdateCmd('status', true);
+			$eq->checkAndUpdateCmd('speeddl', $download);
+			$eq->checkAndUpdateCmd('speedul', $upload);
+			$eq->checkAndUpdateCmd('ping', $ping);
+			$eq->setConfiguration('image', $img);			
+		} catch (Exception $exc) {
+			log::add(__CLASS__,'error','status error');
+			$eq->checkAndUpdateCmd('status', false);
+			$eq->checkAndUpdateCmd('speeddl', 0);
+			$eq->checkAndUpdateCmd('speedul', 0);
+			$eq->checkAndUpdateCmd('ping', 0);
+			$eq->setConfiguration('image','');
+		}
+		$eq->save();
+		$eq->refreshWidget();		
+		return;
+	}
+	
+	public function getInfo($_options=false) {
+		if ($_options != NULL) {
+			$eq = self::byId($_options['speedtest_id']);	
+		} else {
+			$eq = $this;	
 		}
 		$changed = false;	
 		$cmd = 'sudo speedtest --share';
 		$cmd = exec($cmd,$results);
-		log::add('speedtest','debug','############################################');
-		log::add('speedtest','debug','############################################');
-		log::add('speedtest','debug',print_r($results,true));
-		log::add('speedtest','debug','count: ' . count($results));
+		log::add(__CLASS__,'debug','############################################');
+		log::add(__CLASS__,'debug','############################################');
+		log::add(__CLASS__,'debug',print_r($results,true));
+		log::add(__CLASS__,'debug','count: ' . count($results));
 		if (count($results) == 2) {
-			log::add('speedtest','debug','status 0');
+			log::add(__CLASS__,'debug','status 0');
 			$eq->checkAndUpdateCmd('status', 0);
 			$eq->checkAndUpdateCmd('speeddl', 0);
 			$eq->checkAndUpdateCmd('speedul', 0);
@@ -111,39 +152,48 @@ class speedtest extends eqLogic {
 			return;			
 						
 		} else {
-			log::add('speedtest','debug','status 1');
+			log::add(__CLASS__,'debug','status 1');
 			$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
 		}
 		foreach ($results as $result) {
-			log::add('speedtest','debug','info : ' . $result);
+			log::add(__CLASS__,'debug','info : ' . $result);
 				if ($result[0] == '.') {
-					log::add('speedtest','debug','suppresion du : ' .$result[0]);
+					log::add(__CLASS__,'debug','suppresion du : ' .$result[0]);
 					$result = substr($result,1);
 				}
 			if ((strstr($result, "Download:"))) {
 				$downloads = str_replace("Download: ", "" , $result);
 				$download = explode(' ' , $downloads);			
 				$changed = $eq->checkAndUpdateCmd('speeddl', $download[0]) || $changed;
-				log::add('speedtest','debug','dl : ' . $download[0]);
+				log::add(__CLASS__,'debug','dl : ' . $download[0]);
 			} elseif(((strstr($result, "Upload:")))) {
 				$uploads = str_replace("Upload: ", "" , $result);
 				$upload = explode(' ' , $uploads);				
 				$changed = $eq->checkAndUpdateCmd('speedul', $upload[0]) || $changed;
-				log::add('speedtest','debug','ul : ' . $upload[0]);				
+				log::add(__CLASS__,'debug','ul : ' . $upload[0]);				
 			} elseif (((strstr($result, "Share results:")))) {
 				$img = str_replace("Share results: ", "" , $result);
 				$eq->setConfiguration('image',$img);
 				$eq->save();
 			} elseif (preg_match_all('#Hosted by .*: (.*?) ms#',$result,$ping)) {
-				log::add('speedtest','debug','ping : ' . $ping[1][0]);
+				log::add(__CLASS__,'debug','ping : ' . $ping[1][0]);
 				$changed = $eq->checkAndUpdateCmd('ping', $ping[1][0]) || $changed;
 			} 
 		};	
-		log::add('speedtest','debug','############################################');
-		log::add('speedtest','debug','############################################');
+		log::add(__CLASS__,'debug','############################################');
+		log::add(__CLASS__,'debug','############################################');
 		if ($changed) {
 			$eq->refreshWidget();
 		}		
+	}
+	
+	public function updateInfo($_options=false) {
+		if ($_options != NULL) {
+			$eq = eqLogic::byId($_options['speedtest_id']);	
+		} else {
+			$eq = $this;
+		}
+		$eq->getConfiguration('useArch', 0) == 1 ? $eq->getInfoOkla() : $eq->getInfo();
 	}
 	
     public function preUpdate() {
@@ -152,33 +202,47 @@ class speedtest extends eqLogic {
         }
 	}  
 	
-//	public function preSave() {
-//		$arch = com_shell::execute(system::getCmdSudo() . 'dpkg --print-architecture'); 
-//		switch ($arch) {
-//			case 'i386':
-//				$this->setConfiguration('arch', $arch);
-//				break;
-//			case 'x86_64':
-//				$this->setConfiguration('arch', $arch);
-//				break;
-//			case 'aarch64':
-//				$this->setConfiguration('arch', $arch);
-//				break;
-//			case 'arm':
-//				$this->setConfiguration('arch', $arch);
-//				break;
-//			case 'armhf':
-//				$this->setConfiguration('arch', $arch);
-//				break;
-//			case strpos('64', $arch) >= 0:
-//				$this->setConfiguration('arch', 'aarch64');
-//				break;
-//			default:
-//				log::add('speedtest','debug','Architecture non trouvée : ' . $arch);
-//		}
-//	}
-//	
-	public function postUpdate() {
+	public function getArch() {
+		$arch = com_shell::execute(system::getCmdSudo() . 'dpkg --print-architecture'); 
+		switch ($arch) {
+			case 'i386':
+			case 'x86_64':
+			case 'arm':
+			case 'armhf':
+				config::save('arch',$arch,__CLASS__);
+				return $arch;
+				break;
+			case 'aarch64':
+			case strpos('64', $arch) >= 0:
+				config::save('arch',$arch,__CLASS__) ;
+				return $arch;
+				break;
+			default:
+				log::add(__CLASS__,'error','Architecture non trouvée : ' . $arch);
+				return 'nok';
+		}
+	}
+	
+	public function createCommand() {
+		$cmd = __DIR__ . '/../../3rdparty/' . $this->getConfiguration('arch') . '/speedtest --accept-license';
+		$cmd .= ' -u ' . $this->getConfiguration('unit');
+		if ($this->getConfiguration('server_id', '') != '') {
+			$cmd .= ' -s ' . $this->getConfiguration('server_id');
+		}
+		return $cmd;
+	}
+	
+	public function presave() {
+		if(config::byKey('arch', 'speedtest') != '' ) {
+			$this->setConfiguration('arch',config::byKey('arch', 'speedtest'));
+		} else {
+			$arch = $this->getArch();
+			$this->setConfiguration('arch',$arch);
+		}
+	}
+	
+	public function postAjax() {
+		
 		$speedDl = $this->getCmd(null, 'speeddl');
 		if (!is_object($speedDl)) {
 			$speedDl = new speedtestCmd();
@@ -188,8 +252,12 @@ class speedtest extends eqLogic {
 		$speedDl->setEqLogic_id($this->getId());
 		$speedDl->setType('info');
 		$speedDl->setSubType('numeric');
-		$speedDl->setUnite('Mbit/s');
-		$speedDl->save(); 			
+		if( $this->getConfiguration('useArch', 0) == 1) {
+			$speedDl->setUnite($this->getConfiguration('unit'));
+		} else {
+			$speedDl->setUnite('Mbit/s');
+		}		
+		$speedDl->save(); 
 		
 		$speedul = $this->getCmd(null, 'speedul');
 		if (!is_object($speedul)) {
@@ -200,7 +268,11 @@ class speedtest extends eqLogic {
 		$speedul->setEqLogic_id($this->getId());
 		$speedul->setType('info');
 		$speedul->setSubType('numeric');
-		$speedul->setUnite('Mbit/s');
+		if( $this->getConfiguration('useArch', 0) == 1) {
+			$speedul->setUnite($this->getConfiguration('unit'));
+		} else {
+			$speedul->setUnite('Mbit/s');
+		}
 		$speedul->save(); 
 		
 		$ping = $this->getCmd(null, 'ping');
@@ -238,17 +310,17 @@ class speedtest extends eqLogic {
 		$refresh->save(); 
 
 		if ($this->getIsEnable() == 1 && $this->getConfiguration('autCron', 0) == 1 ) {
-			$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId()))); 
+			$cron = cron::byClassAndFunction('speedtest', 'updateInfo', array('speedtest_id' => intval($this->getId()))); 
 			if (!is_object($cron)) {
 				$cron = new cron();
 				$cron->setClass('speedtest');
-				$cron->setFunction('getInfo');
+				$cron->setFunction('updateInfo');
 				$cron->setOption(array('speedtest_id' => intval($this->getId())));
 			}
 			$cron->setSchedule($this->getConfiguration('refreshCron'));
 			$cron->save();			
 		} else {
-			$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
+			$cron = cron::byClassAndFunction('speedtest', 'updateInfo', array('speedtest_id' => intval($this->getId())));  
 			if (is_object($cron)) {
 				$cron->remove();
 			}
@@ -256,10 +328,10 @@ class speedtest extends eqLogic {
     }
 
 	public function preRemove() {
-	   $cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
+	   $cron = cron::byClassAndFunction('speedtest', 'updateInfo', array('speedtest_id' => intval($this->getId())));  
 	   if (is_object($cron)) {
 		   $cron->remove();
-	   }		
+	   }	
 	}
 	
 	public function toHtml($_version = 'dashboard') {
@@ -280,7 +352,7 @@ class speedtest extends eqLogic {
 			  $url = 'https://beta.speedtest.net' . $arr['path'];
 			  $replace['#image#'] = $url;		  		  
 			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
-		}else {
+		} else {
 			  return parent::toHtml($_version);		
 		}
 	}
@@ -293,9 +365,9 @@ class speedtestCmd extends cmd {
 	}	
 	
     public function execute($_options = array()) {	
-		$server = speedtest::byId($this->getEqLogic_id());
+		$server = $this->getEqLogic();
 		if ($this->getLogicalId() == 'refresh') {
-			$server->getInfo();
+			$server->updateInfo();
 		}		
     }
 }

@@ -27,8 +27,8 @@ $plugin = plugin::byId('speedtest');
 		<div class="eqLogicThumbnailContainer">
 		<?php
 			foreach ($eqLogics as $eqLogic) {				
-				$opacity = ($eqLogic->getIsEnable()) ? '' : jeedom::getConfiguration('eqLogic:style:noactive');
-				echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" >';
+				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '" >';
 				echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
 				echo "<br>";
 				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
@@ -117,23 +117,47 @@ $plugin = plugin::byId('speedtest');
 							</div>
 						</div>                     	
 					</div>
-<!--					<div class="form-group">
-						<label class="col-md-2 control-label">{{Arch}}</label>
-						<div class="col-md-1">
-							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="arch" placeholder="Server id" disabled/>
-						</div>       
-					</div> 
-					<br/> 					
+					<br/>
 					<div class="form-group">
+						<label class="col-md-2 control-label">{{ Ookla }}</label>
+						<div class="col-md-1">
+							<input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="useArch"/>
+						</div>
+						<div class="form-group official">
+							<div class="col-md-1">
+								<input type="text" class="eqLogicAttr" data-l1key="configuration" data-l2key="arch"/>
+							</div>							
+						</div>
+					</div>
+					<br/>
+					<div class="form-group official">
 						<label class="col-md-2 control-label">{{Id serveur}}</label>
 						<div class="col-md-1">
 							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
 						</div> 
 						<div class="col-md-1"> 
-							<label class=" ontrol-label" ><a style="text-decoration: underline"  href="http://www.speedtestserver.com/">{{Liste des serveurs}}</a></label>  
+							<label class="control-label" ><a style="text-decoration: underline"  href="http://www.speedtestserver.com/">{{Liste des serveurs}}</a></label>  
 						</div>       
-					</div> -->
-					<br/>                        
+					</div>
+					<br/>
+					<div class="form-group official">
+						<label class="col-md-2 control-label">{{Unité}}</label>
+						<div class="col-md-1">
+							<select class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="unit">
+								<option value="bps">{{bps}}</option>
+								<option value="kbps">{{kbps}}</option>
+								<option value="Mbps">{{Mbps}}</option>
+								<option value="Gbps">{{Gbps}}</option>
+								<option value="kibps">{{kibps}}</option>
+								<option value="Mibps">{{Mibps}}</option>
+								<option value="Gibps">{{Gibps}}</option>
+								<option value="B/s">{{B/s}}</option>
+								<option value="MB/s">{{MB/s}}</option>
+								<option value="GiB/s">{{GiB/s}}</option>									
+							</select>
+						</div>
+					</div>						
+					<br/>  					
 					<div class="form-group">
 						<label class="col-md-2 control-label">{{Widget alternatif}}</label>
 						<div class="col-md-1">

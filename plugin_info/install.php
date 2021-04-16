@@ -19,13 +19,16 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function speedtest_update() {
-	 foreach (speedtest::byType('speedtest',true) as $speedtest) {
+	 foreach (speedtest::byType('speedtest') as $speedtest) {
+		 if($speedtest->getConfiguration('autAltBeta', 0) == 1) {
+			 $speedtest->setConfiguration('autAlt', 1);
+		 }
 		 $speedtest->save();		 
 	 }	
 }
 
 function speedtest_remove() {
-    $crons = cron::searchClassAndFunction('speedtest','getInfo');
+    $crons = cron::searchClassAndFunction('speedtest','updateInfo');
     foreach($crons as $cron) {    
         if(is_object($cron)) {
             $cron->remove();

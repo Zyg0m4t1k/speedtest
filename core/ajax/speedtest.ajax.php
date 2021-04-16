@@ -23,17 +23,20 @@ try {
 	if (!isConnect('admin')) {
 		throw new Exception(__('401 - Accès non autorisé', __FILE__));
 	}
-
 	ajax::init();
-
-	if (init('action') == 'getIp') {
-		ajax::success(speedtest::getIp());
+	if (init('action') == 'setInfo') {
+		$datas = json_decode(init('datas'));
+		$return = array('ip' => '','arch'=> '');
+		try {
+			$return['ip'] = speedtest::getIp();
+			$return['arch'] = speedtest::getArch();			
+		} catch (exception $exc) {
+			log::add(__CLASS__,'debug','Erreur récupération config : ' . $exc);	
+		}
+		ajax::success($return);
 	}
-
-
-
 	throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));
-	/*     * *********Catch exeption*************** */
+/*     * *********Catch exeption*************** */
 } catch (Exception $e) {
 	ajax::error(displayExeption($e), $e->getCode());
 }
