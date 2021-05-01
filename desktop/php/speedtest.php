@@ -165,7 +165,14 @@ $plugin = plugin::byId('speedtest');
 						<div class="col-md-1">
 							<input type="checkbox" class="eqLogicAttr speedtest-widgetType" data-l1key="configuration" data-l2key="autAlt"/>
 						</div>                   	
-					</div>                           
+					</div>
+					<br/>
+					<div class="form-group">
+						<label class="col-md-2 control-label">{{Widget Bétâ}}</label>
+						<div class="col-md-1">
+							<input type="checkbox" class="eqLogicAttr speedtest-widgetType" data-l1key="configuration" data-l2key="autAltBeta"/>
+						</div>                   	
+					</div>					
 				</form>                      
 			</div>
 			<div role="tabpanel" class="tab-pane" id="infocmd">  

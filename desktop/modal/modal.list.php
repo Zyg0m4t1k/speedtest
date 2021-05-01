@@ -3,18 +3,28 @@
 $id = init('id');
 $eq = eqLogic::byId($id);
 if(!is_object($eq)) {
-	echo '<legend class="danger">{{ Equipement non trouvé }}</legend>';
+	echo '<legend class="danger">Equipement non trouvé</legend>';
 }
 if( $eq->getConfiguration('useArch', 0) == 1 ) {
-	$file = __DIR__ . '/../../3rdparty/' . $eq->getConfiguration('arch');
-	if(!is_file($file)) {
-		echo '<legend class="danger">{{ Architecture non valable }}</legend>';
+	$dir = __DIR__ . '/../../3rdparty/' . $eq->getConfiguration('arch');
+	if(!is_dir($dir)) {
+		echo '<legend class="danger">Architecture non valable</legend>';
 		die;
 	}
-	$cmd = $file . '/speedtest --list';	
+	$cmd = $dir . '/speedtest --servers';
+	$list = com_shell::execute(system::getCmdSudo() . $cmd);
+	$lines = explode(PHP_EOL, $list);
+	echo '<center>';
+	foreach ($lines as $line) {
+		echo $line . '<br/>';
+	}
+	echo '</center>';
+	die;
+	
 } else {
 	$cmd = 'speedtest --list ';
 }
+
 $list = com_shell::execute(system::getCmdSudo() . $cmd);
 $lines = explode(PHP_EOL, $list);
 ?>
