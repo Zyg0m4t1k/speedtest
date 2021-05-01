@@ -27,12 +27,13 @@ if (!isConnect('admin')) {
 	<fieldset>
 		<div class="form-group">
 			<label class="col-md-1 control-label">{{Bétâ}}</label>
-			<div class="col-md-1">
-				<input type="checkbox" class="configKey" data-l1key="useArch" />
-			</div>
 			<label class="col-md-1 control-label" >{{Arch}}</label>
 			<div class="col-md-1">
-					<input class="configKey" data-l1key="arch"  />
+					<input class="configKey" data-l1key="arch" disabled />
+			</div>
+			<label class="col-md-1 control-label" >{{Origin}}</label>
+			<div class="col-md-1">
+					<input class="configKey" data-l1key="archOrigin" disabled />
 			</div>
 		</div>		
 		<div class="form-group">

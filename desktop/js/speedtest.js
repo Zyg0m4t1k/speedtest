@@ -39,6 +39,19 @@ $('#bt_cronGenerator').on('click', function () {
 	});
 });
 
+$("body").undelegate(".speedtest-widgetType", 'change ').delegate('.speedtest-widgetType', 'change ', function () {
+	if ( $(this).value() == 1) {
+		$('.speedtest-widgetType').not(this).each(function(){
+			$( this ).prop("checked", false);
+		});
+	}	
+});
+
+$(".eqLogicAction[data-action='serverList']").on('click',function(){
+	let id = $('.eqLogicAttr[data-l1key=id]').value();
+	$('#md_modal').dialog({title: "{{Listes des serveurs}}"}).load('index.php?v=d&plugin=speedtest&modal=modal.list&id=' + id).dialog('open');
+});
+
 function printEqLogic(_eqLogic) {
 	$('#cron_speedtest').hide();
 	$('.official').hide();

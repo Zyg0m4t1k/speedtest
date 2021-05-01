@@ -119,25 +119,27 @@ $plugin = plugin::byId('speedtest');
 					</div>
 					<br/>
 					<div class="form-group">
+						<label class="col-md-2 control-label">{{Id serveur}}</label>
+						<div class="col-md-1">
+							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
+						</div> 
+						<div class="col-md-1"> 
+							<label class="control-label" >
+								<a class="btn btn-default eqLogicAction btn-sm" data-action="serverList"><i class="fas fa-server"></i> {{Serveurs}}</a>
+							</label>  
+						</div>       
+					</div>					
+					<br/>
+					<div class="form-group">
 						<label class="col-md-2 control-label">{{ Ookla }}</label>
 						<div class="col-md-1">
 							<input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="useArch"/>
 						</div>
 						<div class="form-group official">
 							<div class="col-md-1">
-								<input type="text" class="eqLogicAttr" data-l1key="configuration" data-l2key="arch"/>
+								<input type="text" class="eqLogicAttr" data-l1key="configuration" data-l2key="arch" disabled/>
 							</div>							
 						</div>
-					</div>
-					<br/>
-					<div class="form-group official">
-						<label class="col-md-2 control-label">{{Id serveur}}</label>
-						<div class="col-md-1">
-							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
-						</div> 
-						<div class="col-md-1"> 
-							<label class="control-label" ><a style="text-decoration: underline"  href="http://www.speedtestserver.com/">{{Liste des serveurs}}</a></label>  
-						</div>       
 					</div>
 					<br/>
 					<div class="form-group official">
@@ -161,15 +163,9 @@ $plugin = plugin::byId('speedtest');
 					<div class="form-group">
 						<label class="col-md-2 control-label">{{Widget alternatif}}</label>
 						<div class="col-md-1">
-							<input type="checkbox" class="eqLogicAttr widgetType" data-l1key="configuration" data-l2key="autAlt"/>
+							<input type="checkbox" class="eqLogicAttr speedtest-widgetType" data-l1key="configuration" data-l2key="autAlt"/>
 						</div>                   	
-					</div>
-					<div class="form-group">
-						<label class="col-md-2 control-label">{{Widget Betâ}}</label>
-						<div class="col-md-1">
-							<input type="checkbox" class="eqLogicAttr widgetType" data-l1key="configuration" data-l2key="autAltBeta" />
-						</div>                   	
-					</div>                            
+					</div>                           
 				</form>                      
 			</div>
 			<div role="tabpanel" class="tab-pane" id="infocmd">  
