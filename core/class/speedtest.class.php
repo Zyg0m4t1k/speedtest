@@ -156,11 +156,11 @@ class speedtest extends eqLogic {
 			}
 			return $cmd;			
 		} else {
-			$file = __DIR__ . '/../../3rdparty/' . $this->getConfiguration('arch');
-			if(!is_file($file)) {
+			$dir= __DIR__ . '/../../3rdparty/' . $this->getConfiguration('arch');
+			if(!is_dir($dir)) {
 				return false;
 			}
-			$cmd = $file . '/speedtest --accept-license';
+			$cmd = $dir . '/speedtest --accept-license';
 			$cmd .= ' -u ' . $this->getConfiguration('unit');
 			if ($this->getConfiguration('server_id', '') != '') {
 				$cmd .= ' -s ' . $this->getConfiguration('server_id');
