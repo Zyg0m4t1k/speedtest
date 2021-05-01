@@ -20,6 +20,7 @@ $lines = explode(PHP_EOL, $list);
 ?>
 <br/>
 <center>
+	<span class="success"> <?php echo count($lines) -1;?> {{ serveurs }}</span>
 	<table id="speedtest_serverList">
 		<caption><input class="form-control" placeholder="{{Rechercher Pays}}" id="countrysearchServer" /></caption>
 		<thead>

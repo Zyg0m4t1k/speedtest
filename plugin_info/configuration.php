@@ -35,7 +35,17 @@ if (!isConnect('admin')) {
 			<div class="col-md-1">
 					<input class="configKey" data-l1key="archOrigin" disabled />
 			</div>
+		</div>
+		<br/>
+		<div class="form-group">
+			<label class="col-md-1 control-label">{{Serveurs :}}</label>
+			<div class="col-md-1"> 
+				<label class="control-label" >
+					<a class="btn btn-default eqLogicAction btn-sm" data-action="globalList"><i class="fas fa-server"></i> {{Serveurs}}</a>
+				</label>  
+			</div>       
 		</div>		
+		<br/>
 		<div class="form-group">
 			<label class="col-lg-1 control-label">{{Droits Sudo : }}</label>
 			<?php

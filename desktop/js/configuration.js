@@ -1,4 +1,8 @@
-	$('.configKey[data-l1key=checkIp]').change(function () {
+$(".eqLogicAction[data-action='globalList']").on('click',function(){
+	$('#md_modal').dialog({title: "{{Listes des serveurs}}"}).load('index.php?v=d&plugin=speedtest&modal=modal.config').dialog('open');
+});
+
+$('.configKey[data-l1key=checkIp]').change(function () {
 //		 if(this.checked) {
 //			$.ajax({// fonction permettant de faire de l'ajax
 //				type: "POST", // methode de transmission des données au fichier php
