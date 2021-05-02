@@ -107,32 +107,40 @@ class speedtest extends eqLogic {
 	}
 	
 	public function getInfoOkla() { 
+		log::add(__CLASS__,'debug','############################################');
+		log::add(__CLASS__,'debug','############################################');		
 		$cmd = $this->createCommand();
 		if(!$cmd) {
 			log::add(__CLASS__, 'debug', '!!! Le fichier executable n\'existe pas !!!');
 			return;
 		}
+		log::add(__CLASS__, 'debug', 'Cmd : ' . $cmd );
 		try {
-			$cmd = exec($cmd,$result);
-			log::add(__CLASS__,'debug','############################################');
-			log::add(__CLASS__,'debug','############################################');			
-			log::add(__CLASS__,'debug',print_r($results,true));
-			log::add(__CLASS__,'debug','count: ' . count($results));			
-			$lines = explode(PHP_EOL, $result);
-			foreach ($lines as $line) {
-				if(preg_match('#Latency:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
-					$ping = $m[1];
-				}			
-				if(preg_match('#Download:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
-					$download = $m[1];
-				}
-				if(preg_match('#Upload:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
-					$upload = $m[1];
-				}
-				if(preg_match('#Result URL:\s{1,}(.*)#',$line,$m)) {
-					$img = trim($m[1]) . '.png';
-				}	
+			//$result = com_shell::execute(system::getCmdSudo() . $cmd);
+			exec('sudo ' . $cmd, $result, $err);
+			log::add(__CLASS__,'debug', ' result '  . print_r($result,true));
+			if($err != 0) {
+				log::add(__CLASS__,'debug', ' Lancement de la commande impossible ' . $err);
+				$this->checkAndUpdateCmd('status', false);
+				$this->checkAndUpdateCmd('speeddl', 0);
+				$this->checkAndUpdateCmd('speedul', 0);
+				$this->checkAndUpdateCmd('ping', 0);
+				$this->setConfiguration('image','');				
+				return;
 			}
+			if(preg_match('#Latency:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$result[5],$m)) {
+				$ping = $m[1];
+			}			
+			if(preg_match('#Download:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$result[6],$m)) {
+				$download = $m[1];
+			}
+			if(preg_match('#Upload:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$result[7],$m)) {
+				$upload = $m[1];
+			}			
+			if(preg_match('#Result URL:\s{1,}(.*)#',$result[9],$m)) {
+				$img = trim($m[1]) . '.png';
+			}			
+
 			$this->checkAndUpdateCmd('status', true);
 			$this->checkAndUpdateCmd('speeddl', $download);
 			$this->checkAndUpdateCmd('speedul', $upload);
