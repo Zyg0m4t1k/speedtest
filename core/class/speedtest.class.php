@@ -249,7 +249,7 @@ class speedtest extends eqLogic {
 				case 'aarch64':
 				case strpos('64', $arch) >= 0:
 					config::save('arch','aarch64',__CLASS__) ;
-					return $arch;
+					return 'aarch64';
 					break;
 				default:
 					log::add(__CLASS__,'error','Architecture non trouvée : ' . $arch);
