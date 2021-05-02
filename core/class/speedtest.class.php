@@ -173,7 +173,7 @@ class speedtest extends eqLogic {
 			if(!is_dir($dir)) {
 				return false;
 			}
-			$cmd = $dir . '/speedtest --accept-license';
+			$cmd = $dir . '/speedtest --accept-license --accept-gdpr';
 			$cmd .= ' -u ' . $this->getConfiguration('unit');
 			if ($this->getConfiguration('server_id', '') != '') {
 				$cmd .= ' -s ' . $this->getConfiguration('server_id');
@@ -249,6 +249,10 @@ class speedtest extends eqLogic {
 			switch ($arch) {
 				case 'i386':
 				case 'x86_64':
+				case 'amd64':
+					config::save('arch','x86_64',__CLASS__);
+					return 'x86_64';
+					break;
 				case 'arm':
 				case 'armhf':
 					config::save('arch',$arch,__CLASS__);
