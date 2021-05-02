@@ -329,14 +329,14 @@ class speedtest extends eqLogic {
 		$refresh->setSubType('other');
 		$refresh->save(); 
 
-		$cron = cron::byClassAndFunction('speedtest', 'updateInfo', array('speedtest_id' => intval($this->getId())));  
+		$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
 		if (is_object($cron)) {
 			$cron->remove();
 		}		
     }
 
 	public function preRemove() {
-	   $cron = cron::byClassAndFunction('speedtest', 'updateInfo', array('speedtest_id' => intval($this->getId())));  
+	   $cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
 	   if (is_object($cron)) {
 		   $cron->remove();
 	   }	

@@ -24,7 +24,7 @@ function speedtest_update() {
 			$speedtest->setConfiguration( 'autAlt', 1 );
 		}
 		$speedtest->save();
-		$cron = cron::byClassAndFunction( 'speedtest', 'updateInfo', array( 'speedtest_id' => intval( $speedtest->getId() ) ) );
+		$cron = cron::byClassAndFunction( 'speedtest', 'getInfo', array( 'speedtest_id' => intval( $speedtest->getId() ) ) );
 		if ( is_object( $cron ) ) {
 			$cron->remove();
 		}
