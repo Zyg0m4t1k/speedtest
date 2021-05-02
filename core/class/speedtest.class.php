@@ -33,7 +33,7 @@ class speedtest extends eqLogic {
 						try {
 							$server->updateInfo();
 						} catch ( Exception $exc ) {
-							log::add( 'meteoprev', 'error', __( 'Erreur pour ', __FILE__ ) . $server->getHumanName() . ' : ' . $exc->getMessage() );
+							log::add( 'speedtest', 'error', __( 'Erreur pour ', __FILE__ ) . $server->getHumanName() . ' : ' . $exc->getMessage() );
 						}
 					}
 				} catch ( Exception $exc ) {
@@ -114,7 +114,10 @@ class speedtest extends eqLogic {
 		}
 		try {
 			$result = com_shell::execute(system::getCmdSudo() . $cmd);
-			log::add(__CLASS__, 'debug', '!!! Le fichier executable n\'existe pas !!!');
+			log::add(__CLASS__,'debug','############################################');
+			log::add(__CLASS__,'debug','############################################');			
+			log::add(__CLASS__,'debug',print_r($results,true));
+			log::add(__CLASS__,'debug','count: ' . count($results));			
 			$lines = explode(PHP_EOL, $result);
 			foreach ($lines as $line) {
 				if(preg_match('#Latency:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$line,$m)) {
@@ -136,13 +139,15 @@ class speedtest extends eqLogic {
 			$this->checkAndUpdateCmd('ping', $ping);
 			$this->setConfiguration('image', $img);			
 		} catch (Exception $exc) {
-			log::add(__CLASS__,'debug','status error ' . $exc);
+			log::add(__CLASS__,'debug','getInfoOkla error ' . $exc);
 			$this->checkAndUpdateCmd('status', false);
 			$this->checkAndUpdateCmd('speeddl', 0);
 			$this->checkAndUpdateCmd('speedul', 0);
 			$this->checkAndUpdateCmd('ping', 0);
 			$this->setConfiguration('image','');
 		}
+		log::add(__CLASS__,'debug','############################################');
+		log::add(__CLASS__,'debug','############################################');		
 		$this->save();
 		$this->refreshWidget();		
 		return;
@@ -171,7 +176,6 @@ class speedtest extends eqLogic {
 	
 	public function getInfo() {
 		$changed = false;	
-		
 		$cmd = $this->createCommand(false);
 		log::add(__CLASS__,'debug','cmd : ' . $cmd);
 		$cmd = exec($cmd,$results);
