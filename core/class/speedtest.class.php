@@ -248,17 +248,24 @@ class speedtest extends eqLogic {
 			config::save('archOrigin',$arch,__CLASS__);
 			switch ($arch) {
 				case 'i386':
+					config::save('arch',$arch,__CLASS__);
+					return $arch;
+					break;					
 				case 'x86_64':
 				case 'amd64':
 					config::save('arch','x86_64',__CLASS__);
 					return 'x86_64';
 					break;
 				case 'arm':
+					config::save('arch',$arch,__CLASS__);
+					return $arch;
+					break;					
 				case 'armhf':
 					config::save('arch',$arch,__CLASS__);
 					return $arch;
 					break;
 				case 'aarch64':
+				case 'arm64':
 				case strpos('64', $arch) >= 0:
 					config::save('arch','aarch64',__CLASS__) ;
 					return 'aarch64';

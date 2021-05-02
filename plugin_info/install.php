@@ -18,6 +18,12 @@
 
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
+function speedtest_install() {
+	$cmd = system::getCmdSudo() . 'chown -R ' . system::get('www-uid') . ':' . system::get('www-gid') . ' ' . __DIR__ . '/../3rdparty/;';
+	$cmd .= system::getCmdSudo() . 'chmod 775 -R ' . __DIR__ . '/../3rdparty/;';
+	exec($cmd);		
+}
+
 function speedtest_update() {
 	foreach ( speedtest::byType( 'speedtest' ) as $speedtest ) {
 		if ( $speedtest->getConfiguration( 'autAltBeta', 0 ) == 1 ) {
@@ -33,6 +39,10 @@ function speedtest_update() {
 			$cron->remove();
 		}		
 	}
+
+	$cmd = system::getCmdSudo() . 'chown -R ' . system::get('www-uid') . ':' . system::get('www-gid') . ' ' . __DIR__ . '/../3rdparty/;';
+	$cmd .= system::getCmdSudo() . 'chmod 775 -R ' . __DIR__ . '/../3rdparty/;';
+	exec($cmd);	
 }
 
 function speedtest_remove() {
