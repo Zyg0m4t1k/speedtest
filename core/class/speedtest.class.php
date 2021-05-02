@@ -113,7 +113,7 @@ class speedtest extends eqLogic {
 			return;
 		}
 		try {
-			$result = com_shell::execute(system::getCmdSudo() . $cmd);
+			$cmd = exec($cmd,$result);
 			log::add(__CLASS__,'debug','############################################');
 			log::add(__CLASS__,'debug','############################################');			
 			log::add(__CLASS__,'debug',print_r($results,true));
