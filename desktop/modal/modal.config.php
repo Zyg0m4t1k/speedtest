@@ -1,6 +1,6 @@
 <?php
 
-$file = __DIR__ . '/serveur.xml';
+$file = __DIR__ . '/../../resources/serveur.xml';
 
 
 if(!is_file($file)) {
