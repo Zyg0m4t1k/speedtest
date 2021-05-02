@@ -136,7 +136,7 @@ class speedtest extends eqLogic {
 			$this->checkAndUpdateCmd('ping', $ping);
 			$this->setConfiguration('image', $img);			
 		} catch (Exception $exc) {
-			log::add(__CLASS__,'error','status error');
+			log::add(__CLASS__,'debug','status error ' . $exc);
 			$this->checkAndUpdateCmd('status', false);
 			$this->checkAndUpdateCmd('speeddl', 0);
 			$this->checkAndUpdateCmd('speedul', 0);

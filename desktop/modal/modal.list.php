@@ -1,5 +1,11 @@
 <?php
 
+
+
+if (init('id') == '') {
+    throw new Exception('{{L\'id de l\'opération ne peut etre vide : }}' . init('op_id'));
+}
+
 $id = init('id');
 $eq = eqLogic::byId($id);
 if(!is_object($eq)) {
@@ -22,9 +28,9 @@ if( $eq->getConfiguration('useArch', 0) == 1 ) {
 	die;
 	
 } else {
-	$cmd = 'speedtest --list ';
+	
 }
-
+$cmd = 'speedtest --list ';
 $list = com_shell::execute(system::getCmdSudo() . $cmd);
 $lines = explode(PHP_EOL, $list);
 ?>

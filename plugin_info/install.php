@@ -28,6 +28,10 @@ function speedtest_update() {
 		if ( is_object( $cron ) ) {
 			$cron->remove();
 		}
+		$cron = cron::byClassAndFunction( 'speedtest', 'updateInfo', array( 'speedtest_id' => intval( $speedtest->getId() ) ) );
+		if ( is_object( $cron ) ) {
+			$cron->remove();
+		}		
 	}
 }
 
@@ -38,6 +42,12 @@ function speedtest_remove() {
             $cron->remove();
         }  
     }
+    $crons = cron::searchClassAndFunction('speedtest','getInfo');
+    foreach($crons as $cron) {    
+        if(is_object($cron)) {
+            $cron->remove();
+        }  
+    }	
 }
 
 ?>
