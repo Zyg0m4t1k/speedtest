@@ -31,7 +31,7 @@ class speedtest extends eqLogic {
 		try {
 			$pip = com_shell::execute(system::getCmdSudo() . 'which pip');
 		} catch (Exception $exc) {
-			log::add('switchbot', 'debug', 'Impossible de trouver pip ' . $exc);
+			log::add(__CLASS__, 'debug', 'Impossible de trouver pip ' . $exc);
 			$return['state'] = 'nok';
 			return $return;
 		}	
