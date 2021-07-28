@@ -60,7 +60,7 @@ class speedtest extends eqLogic {
 			$list = com_shell::execute(system::getCmdSudo() . $pip . ' show speedtest-cli'); 
 			$lines = explode(PHP_EOL, $list);
 			foreach ($lines as $line) {
-				if ($line == 'Version: 2.1.3') {
+				if ($line == 'Version: 2.1.4b1') {
 					$return['state'] = 'ok';		
 				}
 			}		
