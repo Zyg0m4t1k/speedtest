@@ -30,13 +30,9 @@
         "Id": "Id",
         "Nom": "Nom",
         "Options": "Options",
-<<<<<<< HEAD
-        "Actions": "Actions"
-=======
         "Actions": "Actions",
         "Gestion": "Gestion",
         "Mes Equipements": "Mes Equipements"
->>>>>>> 12ae783ea2f73e9244236479bbe3e254589561a7
     },
     "plugins\/speedtest\/plugin_info\/configuration.php": {
         "Droits Sudo : ": "Droits Sudo : ",
