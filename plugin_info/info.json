@@ -1,30 +1,37 @@
 {
-    "id": "speedtest",
-    "name": "Speedtest",
-    "pluginVersion": "2.0",
-    "description": {
-        "fr_FR": "Mesurez et surveillez les performances de votre connexion internet depuis Jeedom : download, upload, ping, jitter, perte de paquets et score global.",
-        "en_US": "Measure and monitor your internet connection performance from Jeedom: download, upload, ping, jitter, packet loss and overall score.",
-        "es_ES": "Mida y supervise el rendimiento de su conexión a internet desde Jeedom: descarga, subida, ping, jitter, pérdida de paquetes y puntuación global.",
-        "de_DE": "Messen und überwachen Sie die Leistung Ihrer Internetverbindung über Jeedom: Download, Upload, Ping, Jitter, Paketverlust und Gesamtbewertung.",
-        "it_IT": "Misura e monitora le prestazioni della tua connessione internet da Jeedom: download, upload, ping, jitter, perdita di pacchetti e punteggio globale.",
-        "pt_PT": "Meça e monitorize o desempenho da sua ligação à internet a partir do Jeedom: download, upload, ping, jitter, perda de pacotes e pontuação global."
-    },
-    "licence": "AGPL",
-    "author": "zyg0m4t1k",
-    "require": "4.4",
-    "os": {
-        "min": 11,
-        "max": 13.99
-    },
-    "hasDependency": true,
-    "hasOwnDeamon": false,
-    "maxDependancyInstallTime": 10,
-    "category": "monitoring",
-    "changelog": "https://zyg0m4t1k.github.io/docs/plugins/speedtest/changelog/",
-    "documentation": "https://zyg0m4t1k.github.io/docs/plugins/speedtest/",
-    "language": ["de_DE", "en_US", "es_ES", "fr_FR", "it_IT", "pt_PT"],
-    	"compatibility": [
+	"id": "speedtest",
+	"name": "Speedtest",
+	"pluginVersion": "2.0",
+	"description": {
+		"fr_FR": "Mesurez et surveillez les performances de votre connexion internet depuis Jeedom : download, upload, ping, jitter, perte de paquets et score global.",
+		"en_US": "Measure and monitor your internet connection performance from Jeedom: download, upload, ping, jitter, packet loss and overall score.",
+		"es_ES": "Mida y supervise el rendimiento de su conexión a internet desde Jeedom: descarga, subida, ping, jitter, pérdida de paquetes y puntuación global.",
+		"de_DE": "Messen und überwachen Sie die Leistung Ihrer Internetverbindung über Jeedom: Download, Upload, Ping, Jitter, Paketverlust und Gesamtbewertung.",
+		"it_IT": "Misura e monitora le prestazioni della tua connessione internet da Jeedom: download, upload, ping, jitter, perdita di pacchetti e punteggio globale.",
+		"pt_PT": "Meça e monitorize o desempenho da sua ligação à internet a partir do Jeedom: download, upload, ping, jitter, perda de pacotes e pontuação global."
+	},
+	"licence": "AGPL",
+	"author": "zyg0m4t1k",
+	"require": "4.4",
+	"os": {
+		"min": 11,
+		"max": 13.99
+	},
+	"hasDependency": true,
+	"hasOwnDeamon": false,
+	"maxDependancyInstallTime": 10,
+	"category": "monitoring",
+	"changelog": "https://zyg0m4t1k.github.io/docs/plugins/speedtest/changelog/",
+	"documentation": "https://zyg0m4t1k.github.io/docs/plugins/speedtest/",
+	"language": [
+		"de_DE",
+		"en_US",
+		"es_ES",
+		"fr_FR",
+		"it_IT",
+		"pt_PT"
+	],
+	"compatibility": [
 		"smart",
 		"luna",
 		"atlas",

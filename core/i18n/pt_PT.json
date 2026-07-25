@@ -1,45 +1,94 @@
 {
+    "plugins\/speedtest\/core\/ajax\/speedtest.ajax.php": {
+        "401 - Accès non autorisé": "401 - Accès non autorisé",
+        "Aucune methode correspondante à : ": ""
+    },
+    "plugins\/speedtest\/core\/class\/speedtest.class.php": {
+        "Download": "",
+        "Erreur": "Erro",
+        "Etat": "Estado",
+        "FAI": "",
+        "Jitter": "",
+        "Notation usage": "",
+        "OK": "Ok",
+        "Perte": "",
+        "Perte de paquets": "",
+        "Ping": "",
+        "Rafraichir": "Recarregar",
+        "Score": "",
+        "Serveur": "",
+        "Upload": ""
+    },
+    "plugins\/speedtest\/desktop\/js\/configuration.js": {
+        "Listes des serveurs": ""
+    },
     "plugins\/speedtest\/desktop\/js\/speedtest.js": {
-        "Historiser": "Historiser",
         "Afficher": "Afficher",
-        "Tester": "Tester"
+        "Aucune": "Nenhuma",
+        "Choisir une icône": "Escolha um ícone",
+        "Commande info liée": "",
+        "Historiser": "Historiser",
+        "Inverser": "Inverter",
+        "Max": "Máx.",
+        "Min": "Mínimo",
+        "Nom de la commande": "",
+        "Supprimer la commande": "",
+        "Tester": "Tester",
+        "Unité": "Unidade"
+    },
+    "plugins\/speedtest\/desktop\/modal\/modal.config.php": {
+        " Les serveurs sont donnés à titre indicatif, En cas d'échec , choissisez-en un autre...": "",
+        " Nom ": "",
+        " Pays ": "",
+        " Sponsor ": "",
+        " Url ": "",
+        "Rechercher Pays": ""
+    },
+    "plugins\/speedtest\/desktop\/modal\/modal.list.php": {
+        " Distance ": "",
+        " Localisation ": "",
+        " Nom ": "",
+        " serveurs ": "",
+        "L\\'id de l\\'opération ne peut etre vide : ": "",
+        "Rechercher Pays": ""
     },
     "plugins\/speedtest\/desktop\/php\/speedtest.php": {
-        "Rechercher": "Rechercher",
-        "Equipements": "Equipements",
+        "401 - Accès non autorisé": "401 - Accès non autorisé",
+        "Actions": "Actions",
+        "Activer": "Activer",
+        "Activer Cron": "Activer Cron",
         "Ajouter": "Ajouter",
+        "Aucun": "Aucun",
+        "Auto": "",
+        "Catégorie": "Catégorie",
+        "Commandes": "Commandes",
         "Configuration": "Configuration",
+        "Configuration avancée": "Configuration avancée",
+        "Echelle max Download (Mbit\/s)": "",
+        "Echelle max Upload (Mbit\/s)": "",
+        "Equipement": "Equipement",
+        "Etat": "Estado",
+        "Fréquence de rafraichissement des données": "Fréquence de rafraichissement des données",
+        "Gestion": "Gestion",
+        "Id": "Id",
+        "Id serveur (optionnel)": "",
+        "Laisser vide = auto": "",
+        "Mes Equipements": "Mes Equipements",
+        "Nom": "Nom",
+        "Nom de l'équipement": "Nom de l'équipement",
+        "Nom de l'équipement speedtest": "Nom de l'équipement speedtest",
+        "Objet parent": "Objet parent",
+        "Options": "Options",
+        "Rechercher": "Rechercher",
         "Sauvegarder": "Sauvegarder",
         "Supprimer": "Supprimer",
-        "Configuration avancée": "Configuration avancée",
-        "Equipement": "Equipement",
-        "Commandes": "Commandes",
-        "Nom de l'équipement speedtest": "Nom de l'équipement speedtest",
-        "Nom de l'équipement": "Nom de l'équipement",
-        "Objet parent": "Objet parent",
-        "Aucun": "Aucun",
-        "Catégorie": "Catégorie",
-        "Activer": "Activer",
-        "Visible": "Visible",
-        "Activer Cron": "Activer Cron",
-        "Fréquence de rafraichissement des données": "Fréquence de rafraichissement des données",
-        "Id serveur": "Id serveur",
-        "Liste des serveurs": "Liste des serveurs",
-        "Widget alternatif": "Widget alternatif",
-        "Widget Betâ": "Widget Betâ",
-        "Id": "Id",
-        "Nom": "Nom",
-        "Options": "Options",
-        "Actions": "Actions",
-        "Gestion": "Gestion",
-        "Mes Equipements": "Mes Equipements"
+        "Type": "Tipo",
+        "Visible": "Visible"
     },
     "plugins\/speedtest\/plugin_info\/configuration.php": {
-        "Droits Sudo : ": "Droits Sudo : ",
+        "401 - Accès non autorisé": "401 - Accès non autorisé",
+        "Adresse IP": "Adresse IP",
         "Check adresse Ip": "Check adresse Ip",
-        "Adresse IP": "Adresse IP"
-    },
-    "plugins\/speedtest\/core\/ajax\/speedtest.ajax.php": {
-        "401 - Accès non autorisé": "401 - Accès non autorisé"
+        "Droits Sudo : ": "Droits Sudo : "
     }
 }
