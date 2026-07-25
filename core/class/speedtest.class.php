@@ -17,319 +17,366 @@
  */
 
 /* * ***************************Includes********************************* */
-require_once __DIR__ . '/../../../../core/php/core.inc.php';
+require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class speedtest extends eqLogic {
-	
+
 	public static $_widgetPossibility = array('custom' => true);
-	
-	public static function cron() {
-		foreach ( self::byType( 'speedtest', true) as $server ) {
-			$autorefresh = $server->getConfiguration( 'refreshCron' );
-			if ( $autorefresh != '' ) {
-				try {
-					$c = new Cron\ CronExpression( $autorefresh, new Cron\ FieldFactory );
-					if ( $c->isDue() ) {
-						try {
-							$server->updateInfo();
-						} catch ( Exception $exc ) {
-							log::add( 'speedtest', 'error', __( 'Erreur pour ', __FILE__ ) . $server->getHumanName() . ' : ' . $exc->getMessage() );
-						}
-					}
-				} catch ( Exception $exc ) {
-					log::add( __CLASS__, 'error', __( 'Expression cron non valide pour ', __FILE__ ) . $server->getHumanName() . ' : ' . $server );
-				}
-			}
+
+	public static function getSpeedtestBin() {
+		$venv = __DIR__ . '/../../resources/venv/bin/speedtest';
+		if (@is_file($venv) && @is_executable($venv)) {
+			return $venv;
 		}
-	}	
-	
+		return '/usr/local/bin/speedtest';
+	}
+
 	public static function dependancy_info() {
 		$return = array();
-		$return['log'] = __CLASS__ . '_update';
+		$return['log'] = log::getPathToLog(__CLASS__ . '_update');
 		$return['progress_file'] = jeedom::getTmpFolder(__CLASS__) . '/dependance';
-		$return['state'] = 'nok';
-		try {
-			$pip = com_shell::execute(system::getCmdSudo() . 'which pip');
-		} catch (Exception $exc) {
-			log::add(__CLASS__, 'debug', 'Impossible de trouver pip ' . $exc);
-			$return['state'] = 'nok';
-			return $return;
-		}	
-		$pip = rtrim($pip);	
-		try {
-			$list = com_shell::execute(system::getCmdSudo() . $pip . ' show speedtest-cli'); 
-			$lines = explode(PHP_EOL, $list);
-			foreach ($lines as $line) {
-				if ($line == 'Version: 2.1.3') {
-					$return['state'] = 'ok';		
-				}
-			}		
-			return $return;			
-		} catch(Exception $exc) {
+
+		if (file_exists($return['progress_file'])) {
+			$return['state'] = 'in_progress';
 			return $return;
 		}
+
+		$venvBin = __DIR__ . '/../../resources/venv/bin/speedtest';
+		$ok = (is_file($venvBin) && is_executable($venvBin));
+
+		if ($ok) {
+			$out = array();
+			$rc = 0;
+			exec(escapeshellcmd($venvBin) . ' --version 2>&1', $out, $rc);
+			$ok = ((int)$rc === 0);
+		}
+
+		$return['state'] = $ok ? 'ok' : 'nok';
+		return $return;
 	}
-	
-    public static function dependancy_install() {
-        log::remove(__CLASS__ . '_update');
-		return array('script' => __DIR__ . '/../../resources/install.sh ' . jeedom::getTmpFolder(__CLASS__) . '/dependance','log' => log::getPathToLog(__CLASS__ . '_update'));
-    }
-	
+
+	public static function dependancy_install() {
+		log::remove(__CLASS__ . '_update');
+		return array(
+			'script' => dirname(__FILE__) . '/../../resources/install.sh ' . jeedom::getTmpFolder(__CLASS__) . '/dependance',
+			'log' => log::getPathToLog(__CLASS__ . '_update')
+		);
+	}
+
 	public static function cronHourly() {
 		$getIp = config::byKey('checkIp', 'speedtest', 0);
-		if ($getIp == 1 && config::byKey('ipkey', 'speedtest') != '' ) {
+		if ($getIp == 1 && config::byKey('ipkey', 'speedtest') != '') {
 			$ip = self::getIp();
 			if ($ip != config::byKey('ipkey', 'speedtest')) {
-				log::add(__CLASS__, 'error', 'Changement d\'ip :' . $ip);
-				config::save('ipkey',$ip,'speedtest') ;
-			} 
-		}
-	}
-	
-	public function getIp() {
-		$cmds = array('ipinfo.io/ip','ipecho.net/plain','ifconfig.me');
-		$check = '';
-		foreach($cmds as $cmd) {
-			$ip = 'sudo curl ' . $cmd;
-			$ip = exec($ip);
-			if (filter_var($ip, FILTER_VALIDATE_IP)) {
-				config::save('ipkey',$ip,__CLASS__);
-				return $ip;
-				break;
-			} else {
-				$check = false;
+				log::add('speedtest', 'error', 'Changement d\'ip :' . $ip);
+				config::save('ipkey', $ip, 'speedtest');
 			}
 		}
-		if(!$check) {
-			log::add(__CLASS__, 'error', '!!! Impossible de détecter l\'adresse IP !!!');	
-			return false;	
-		}
 	}
-	
-	public function getInfoOkla() { 
-		log::add(__CLASS__,'debug','############################################');
-		log::add(__CLASS__,'debug','############################################');		
-		$cmd = $this->createCommand();
-		if(!$cmd) {
-			log::add(__CLASS__, 'debug', '!!! Le fichier executable n\'existe pas !!!');
+
+	public static function getIp() {
+		$urls = array('ipinfo.io/ip', 'ipecho.net/plain', 'ifconfig.me');
+		foreach ($urls as $url) {
+			$out = array();
+			$rc = 0;
+			exec('curl -s --max-time 10 ' . escapeshellarg($url) . ' 2>/dev/null', $out, $rc);
+			$ip = trim(implode('', $out));
+			if ($rc === 0 && filter_var($ip, FILTER_VALIDATE_IP)) {
+				return $ip;
+			}
+		}
+		log::add('speedtest', 'error', '!!! Impossible de détecter l\'adresse IP !!!');
+		return false;
+	}
+
+	/*     * *************** Mesure jitter et perte de paquets *************** */
+
+	public static function measurePingStats($_host = '8.8.8.8', $_count = 20) {
+		$out = array();
+		$rc = 0;
+		exec('ping -c ' . intval($_count) . ' -W 2 ' . escapeshellarg($_host) . ' 2>&1', $out, $rc);
+		$result = array('jitter' => 0, 'packet_loss' => 0);
+
+		$allRtt = array();
+		foreach ($out as $line) {
+			// Parse "time=12.3 ms"
+			if (preg_match('/time[=<]([\d.]+)\s*ms/', $line, $m)) {
+				$allRtt[] = (float)$m[1];
+			}
+			// Parse "3 packets transmitted, 3 received, 0% packet loss"
+			if (preg_match('/([\d.]+)%\s*packet loss/', $line, $m)) {
+				$result['packet_loss'] = (float)$m[1];
+			}
+		}
+
+		// Jitter = moyenne des différences absolues entre RTT consécutifs
+		if (count($allRtt) > 1) {
+			$diffs = array();
+			for ($i = 1; $i < count($allRtt); $i++) {
+				$diffs[] = abs($allRtt[$i] - $allRtt[$i - 1]);
+			}
+			$result['jitter'] = round(array_sum($diffs) / count($diffs), 2);
+		}
+
+		return $result;
+	}
+
+	/*     * *************** Notation d'usage *************** */
+
+	public static function computeScore($_download, $_upload, $_ping, $_jitter = 0, $_packetLoss = 0) {
+		// Score sur 10 basé sur les métriques réseau
+		// Download (40%), Upload (20%), Ping (20%), Jitter (10%), Packet Loss (10%)
+
+		// Download score: 100 Mbps+ = 10, 50 = 8, 25 = 6, 10 = 4, 5 = 2
+		$dlScore = min(10, $_download / 10);
+
+		// Upload score: 50 Mbps+ = 10, 20 = 8, 10 = 5
+		$ulScore = min(10, $_upload / 5);
+
+		// Ping score: <10ms = 10, 20ms = 8, 50ms = 5, >100ms = 2
+		if ($_ping <= 0) {
+			$pingScore = 0;
+		} elseif ($_ping <= 10) {
+			$pingScore = 10;
+		} elseif ($_ping <= 20) {
+			$pingScore = 8;
+		} elseif ($_ping <= 50) {
+			$pingScore = 5;
+		} elseif ($_ping <= 100) {
+			$pingScore = 3;
+		} else {
+			$pingScore = 1;
+		}
+
+		// Jitter score: <2ms = 10, <5ms = 8, <10ms = 5, <30ms = 3
+		if ($_jitter <= 2) {
+			$jitterScore = 10;
+		} elseif ($_jitter <= 5) {
+			$jitterScore = 8;
+		} elseif ($_jitter <= 10) {
+			$jitterScore = 5;
+		} elseif ($_jitter <= 30) {
+			$jitterScore = 3;
+		} else {
+			$jitterScore = 1;
+		}
+
+		// Packet loss score: 0% = 10, <1% = 7, <3% = 4, >5% = 1
+		if ($_packetLoss <= 0) {
+			$plScore = 10;
+		} elseif ($_packetLoss < 1) {
+			$plScore = 7;
+		} elseif ($_packetLoss < 3) {
+			$plScore = 4;
+		} else {
+			$plScore = 1;
+		}
+
+		$score = ($dlScore * 0.4) + ($ulScore * 0.2) + ($pingScore * 0.2) + ($jitterScore * 0.1) + ($plScore * 0.1);
+		return round(min(10, $score), 1);
+	}
+
+	public static function getUsageRating($_download, $_upload, $_ping) {
+		// Notation textuelle par usage
+		$ratings = array();
+
+		// Navigation web
+		if ($_download >= 5 && $_ping < 100) {
+			$ratings[] = 'web:excellent';
+		} elseif ($_download >= 1) {
+			$ratings[] = 'web:bon';
+		} else {
+			$ratings[] = 'web:insuffisant';
+		}
+
+		// Streaming vidéo
+		if ($_download >= 25) {
+			$ratings[] = 'streaming:4K';
+		} elseif ($_download >= 10) {
+			$ratings[] = 'streaming:HD';
+		} elseif ($_download >= 3) {
+			$ratings[] = 'streaming:SD';
+		} else {
+			$ratings[] = 'streaming:insuffisant';
+		}
+
+		// Jeu en ligne
+		if ($_ping < 20 && $_download >= 10) {
+			$ratings[] = 'gaming:excellent';
+		} elseif ($_ping < 50 && $_download >= 5) {
+			$ratings[] = 'gaming:bon';
+		} elseif ($_ping < 100) {
+			$ratings[] = 'gaming:moyen';
+		} else {
+			$ratings[] = 'gaming:insuffisant';
+		}
+
+		// Visioconférence
+		if ($_upload >= 3 && $_download >= 5 && $_ping < 50) {
+			$ratings[] = 'visio:excellent';
+		} elseif ($_upload >= 1 && $_download >= 2) {
+			$ratings[] = 'visio:bon';
+		} else {
+			$ratings[] = 'visio:insuffisant';
+		}
+
+		return implode(' | ', $ratings);
+	}
+
+	/*     * *************** Collecte des données *************** */
+
+	public function getInfo($_options = false) {
+		if ($_options != null) {
+			$eq = speedtest::byId($_options['speedtest_id']);
+		} else {
+			$eq = speedtest::byId($this->getId());
+		}
+		if (!is_object($eq)) {
+			log::add('speedtest', 'error', 'Equipement introuvable');
 			return;
 		}
-		log::add(__CLASS__, 'debug', 'Cmd : ' . $cmd );
-		try {
-			//$result = com_shell::execute(system::getCmdSudo() . $cmd);
-			exec('sudo ' . $cmd, $result, $err);
-			log::add(__CLASS__,'debug', ' result '  . print_r($result,true));
-			if($err != 0) {
-				log::add(__CLASS__,'debug', ' Lancement de la commande impossible ' . $err);
-				$this->checkAndUpdateCmd('status', false);
-				$this->checkAndUpdateCmd('speeddl', 0);
-				$this->checkAndUpdateCmd('speedul', 0);
-				$this->checkAndUpdateCmd('ping', 0);
-				$this->setConfiguration('image','');				
-				return;
-			}
-			if(preg_match('#Latency:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$result[5],$m)) {
-				$ping = $m[1];
-			}			
-			if(preg_match('#Download:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$result[6],$m)) {
-				$download = $m[1];
-			}
-			if(preg_match('#Upload:\s{1,}([0-9]*[.]?[0-9]+)\s{1,}(.*)\s{1,}\(#',$result[7],$m)) {
-				$upload = $m[1];
-			}			
-			if(preg_match('#Result URL:\s{1,}(.*)#',$result[9],$m)) {
-				$img = trim($m[1]) . '.png';
-			}			
 
-			$this->checkAndUpdateCmd('status', true);
-			$this->checkAndUpdateCmd('speeddl', $download);
-			$this->checkAndUpdateCmd('speedul', $upload);
-			$this->checkAndUpdateCmd('ping', $ping);
-			$this->setConfiguration('image', $img);			
-		} catch (Exception $exc) {
-			log::add(__CLASS__,'debug','getInfoOkla error ' . $exc);
-			$this->checkAndUpdateCmd('status', false);
-			$this->checkAndUpdateCmd('speeddl', 0);
-			$this->checkAndUpdateCmd('speedul', 0);
-			$this->checkAndUpdateCmd('ping', 0);
-			$this->setConfiguration('image','');
+		$changed = false;
+		$speedtestBin = self::getSpeedtestBin();
+
+		// Construction de la commande avec options
+		$cmdLine = escapeshellcmd($speedtestBin) . ' --json --share';
+		$serverId = $eq->getConfiguration('server_id', '');
+		if ($serverId != '') {
+			$cmdLine .= ' --server ' . escapeshellarg($serverId);
 		}
-		log::add(__CLASS__,'debug','############################################');
-		log::add(__CLASS__,'debug','############################################');		
-		$this->save();
-		$this->refreshWidget();		
-		return;
-	}
-	
-	public function createCommand($local = true) {
-		if(!$local) {
-			$cmd = 'sudo speedtest --share ';
-			if ($this->getConfiguration('server_id', '') != '') {
-				$cmd .= ' --server ' . $this->getConfiguration('server_id');
-			}
-			return $cmd;			
-		} else {
-			$dir= __DIR__ . '/../../3rdparty/' . $this->getConfiguration('arch');
-			if(!is_dir($dir)) {
-				return false;
-			}
-			$cmd = $dir . '/speedtest --accept-license --accept-gdpr';
-			$cmd .= ' -u ' . $this->getConfiguration('unit');
-			if ($this->getConfiguration('server_id', '') != '') {
-				$cmd .= ' -s ' . $this->getConfiguration('server_id');
-			}
-			return $cmd;			
+
+		log::add('speedtest', 'debug', '############ Lancement speedtest ############');
+		log::add('speedtest', 'debug', 'Commande : ' . $cmdLine);
+
+		$output = array();
+		$rc = 0;
+		exec($cmdLine . ' 2>&1', $output, $rc);
+		$raw = implode('', $output);
+		log::add('speedtest', 'debug', 'Sortie brute : ' . $raw);
+
+		$data = json_decode($raw, true);
+
+		if (!is_array($data) || !isset($data['download'])) {
+			log::add('speedtest', 'error', 'Echec du speedtest (rc=' . $rc . ')');
+			$eq->checkAndUpdateCmd('status', 0);
+			$eq->checkAndUpdateCmd('speeddl', 0);
+			$eq->checkAndUpdateCmd('speedul', 0);
+			$eq->checkAndUpdateCmd('ping', 0);
+			$eq->checkAndUpdateCmd('jitter', 0);
+			$eq->checkAndUpdateCmd('packet_loss', 0);
+			$eq->checkAndUpdateCmd('score', 0);
+			$eq->refreshWidget();
+			return;
 		}
-	}	
-	
-	public function getInfo() {
-		$changed = false;	
-		$cmd = $this->createCommand(false);
-		log::add(__CLASS__,'debug','cmd : ' . $cmd);
-		$cmd = exec($cmd,$results);
-		log::add(__CLASS__,'debug','############################################');
-		log::add(__CLASS__,'debug','############################################');
-		log::add(__CLASS__,'debug',print_r($results,true));
-		log::add(__CLASS__,'debug','count: ' . count($results));
-		if (count($results) == 2) {
-			log::add(__CLASS__,'debug','status 0');
-			$this->checkAndUpdateCmd('status', 0);
-			$this->checkAndUpdateCmd('speeddl', 0);
-			$this->checkAndUpdateCmd('speedul', 0);
-			$this->checkAndUpdateCmd('ping', 0);
-			$this->setConfiguration('image',$img);
-			$this->save();
-			$this->refreshWidget();
-			return;			
-						
-		} else {
-			log::add(__CLASS__,'debug','status 1');
-			$changed = $this->checkAndUpdateCmd('status', 1) || $changed;
+
+		// Conversion bits/s en Mbit/s
+		$download = round($data['download'] / 1000000, 2);
+		$upload = round($data['upload'] / 1000000, 2);
+		$ping = round($data['ping'], 2);
+
+		log::add('speedtest', 'debug', 'Download: ' . $download . ' Mbit/s');
+		log::add('speedtest', 'debug', 'Upload: ' . $upload . ' Mbit/s');
+		log::add('speedtest', 'debug', 'Ping: ' . $ping . ' ms');
+
+		$changed = $eq->checkAndUpdateCmd('status', 1) || $changed;
+		$changed = $eq->checkAndUpdateCmd('speeddl', $download) || $changed;
+		$changed = $eq->checkAndUpdateCmd('speedul', $upload) || $changed;
+		$changed = $eq->checkAndUpdateCmd('ping', $ping) || $changed;
+
+		// Infos serveur
+		if (isset($data['server'])) {
+			$serverName = $data['server']['sponsor'] . ' - ' . $data['server']['name'];
+			$serverLocation = $data['server']['name'] . ', ' . $data['server']['country'];
+			$changed = $eq->checkAndUpdateCmd('server_name', $serverName) || $changed;
+			log::add('speedtest', 'debug', 'Serveur: ' . $serverName . ' (' . $serverLocation . ')');
 		}
-		foreach ($results as $result) {
-			log::add(__CLASS__,'debug','info : ' . $result);
-				if ($result[0] == '.') {
-					log::add(__CLASS__,'debug','suppresion du : ' .$result[0]);
-					$result = substr($result,1);
-				}
-			if ((strstr($result, "Download:"))) {
-				$downloads = str_replace("Download: ", "" , $result);
-				$download = explode(' ' , $downloads);			
-				$changed = $this->checkAndUpdateCmd('speeddl', $download[0]) || $changed;
-				log::add(__CLASS__,'debug','dl : ' . $download[0]);
-			} elseif(((strstr($result, "Upload:")))) {
-				$uploads = str_replace("Upload: ", "" , $result);
-				$upload = explode(' ' , $uploads);				
-				$changed = $this->checkAndUpdateCmd('speedul', $upload[0]) || $changed;
-				log::add(__CLASS__,'debug','ul : ' . $upload[0]);				
-			} elseif (((strstr($result, "Share results:")))) {
-				$img = str_replace("Share results: ", "" , $result);
-				$this->setConfiguration('image',$img);
-				$this->save();
-			} elseif (preg_match_all('#Hosted by .*: (.*?) ms#',$result,$ping)) {
-				log::add(__CLASS__,'debug','ping : ' . $ping[1][0]);
-				$changed = $this->checkAndUpdateCmd('ping', $ping[1][0]) || $changed;
-			} 
-		};	
-		log::add(__CLASS__,'debug','############################################');
-		log::add(__CLASS__,'debug','############################################');
+
+		// ISP
+		if (isset($data['client']['isp'])) {
+			$changed = $eq->checkAndUpdateCmd('isp', $data['client']['isp']) || $changed;
+			log::add('speedtest', 'debug', 'ISP: ' . $data['client']['isp']);
+		}
+
+		// Image de partage
+		if (isset($data['share']) && $data['share'] != '') {
+			$eq->setConfiguration('image', $data['share']);
+			$eq->save();
+		}
+
+		// Jitter et perte de paquets via ping
+		$pingHost = '8.8.8.8';
+		if (isset($data['server']['host'])) {
+			$hostParts = explode(':', $data['server']['host']);
+			$pingHost = $hostParts[0];
+		}
+		log::add('speedtest', 'debug', 'Mesure jitter/packet_loss sur ' . $pingHost);
+		$pingStats = self::measurePingStats($pingHost, 20);
+		$changed = $eq->checkAndUpdateCmd('jitter', $pingStats['jitter']) || $changed;
+		$changed = $eq->checkAndUpdateCmd('packet_loss', $pingStats['packet_loss']) || $changed;
+		log::add('speedtest', 'debug', 'Jitter: ' . $pingStats['jitter'] . ' ms');
+		log::add('speedtest', 'debug', 'Packet loss: ' . $pingStats['packet_loss'] . ' %');
+
+		// Score global et notation d'usage
+		$score = self::computeScore($download, $upload, $ping, $pingStats['jitter'], $pingStats['packet_loss']);
+		$changed = $eq->checkAndUpdateCmd('score', $score) || $changed;
+		log::add('speedtest', 'debug', 'Score: ' . $score . '/10');
+
+		$rating = self::getUsageRating($download, $upload, $ping);
+		$changed = $eq->checkAndUpdateCmd('usage_rating', $rating) || $changed;
+		log::add('speedtest', 'debug', 'Usage: ' . $rating);
+
+		log::add('speedtest', 'debug', '############ Speedtest terminé ############');
+
 		if ($changed) {
-			$this->refreshWidget();
-		}		
-	}
-	
-	public function updateInfo() {
-		$this->getConfiguration('useArch', 0) == 1 ? $this->getInfoOkla() : $this->getInfo();
-	}
-	
-	public function getArch() {
-		try {
-			$arch = com_shell::execute(system::getCmdSudo() . 'dpkg --print-architecture');
-			config::save('archOrigin',$arch,__CLASS__);
-			switch ($arch) {
-				case 'i386':
-					config::save('arch',$arch,__CLASS__);
-					return $arch;
-					break;					
-				case 'x86_64':
-				case 'amd64':
-					config::save('arch','x86_64',__CLASS__);
-					return 'x86_64';
-					break;
-				case 'arm':
-					config::save('arch',$arch,__CLASS__);
-					return $arch;
-					break;					
-				case 'armhf':
-					config::save('arch',$arch,__CLASS__);
-					return $arch;
-					break;
-				case 'aarch64':
-				case 'arm64':
-				case strpos('64', $arch) >= 0:
-					config::save('arch','aarch64',__CLASS__) ;
-					return 'aarch64';
-					break;
-				default:
-					log::add(__CLASS__,'error','Architecture non trouvée : ' . $arch);
-					return 'nok';
-			}			
-		} catch (Exception $except) {
-			log::add( __CLASS__, 'error', __( 'Erreur Architecture : ', __FILE__ ) . $except );
+			$eq->refreshWidget();
 		}
 	}
-	
-	public function preSave() {
-		$arch = $this->getArch();
-		$this->setConfiguration('arch',$arch);
-	}
-	
-	public function postAjax() {
-		
-		$speedDl = $this->getCmd(null, 'speeddl');
-		if (!is_object($speedDl)) {
-			$speedDl = new speedtestCmd();
-			$speedDl->setName(__('Download', __FILE__));
+
+	public function postUpdate() {
+		// Commandes info numériques
+		$numericCmds = array(
+			'speeddl'     => array('name' => __('Download', __FILE__), 'unite' => 'Mbit/s'),
+			'speedul'     => array('name' => __('Upload', __FILE__), 'unite' => 'Mbit/s'),
+			'ping'        => array('name' => __('Ping', __FILE__), 'unite' => 'ms'),
+			'jitter'      => array('name' => __('Jitter', __FILE__), 'unite' => 'ms'),
+			'packet_loss' => array('name' => __('Perte de paquets', __FILE__), 'unite' => '%'),
+			'score'       => array('name' => __('Score', __FILE__), 'unite' => '/10'),
+		);
+		foreach ($numericCmds as $logicalId => $def) {
+			$cmd = $this->getCmd(null, $logicalId);
+			if (!is_object($cmd)) {
+				$cmd = new speedtestCmd();
+				$cmd->setName($def['name']);
+			}
+			$cmd->setLogicalId($logicalId);
+			$cmd->setEqLogic_id($this->getId());
+			$cmd->setType('info');
+			$cmd->setSubType('numeric');
+			$cmd->setUnite($def['unite']);
+			$cmd->save();
 		}
-		$speedDl->setLogicalId('speeddl');
-		$speedDl->setEqLogic_id($this->getId());
-		$speedDl->setType('info');
-		$speedDl->setSubType('numeric');
-		if( $this->getConfiguration('useArch', 0) == 1) {
-			$speedDl->setUnite($this->getConfiguration('unit'));
-		} else {
-			$speedDl->setUnite('Mbps');
-		}		
-		$speedDl->save(); 
-		
-		$speedul = $this->getCmd(null, 'speedul');
-		if (!is_object($speedul)) {
-			$speedul = new speedtestCmd();
-			$speedul->setName(__('Upload', __FILE__));					
+
+		// Commandes info string
+		$stringCmds = array(
+			'server_name'  => __('Serveur', __FILE__),
+			'isp'          => __('FAI', __FILE__),
+			'usage_rating' => __('Notation usage', __FILE__),
+		);
+		foreach ($stringCmds as $logicalId => $name) {
+			$cmd = $this->getCmd(null, $logicalId);
+			if (!is_object($cmd)) {
+				$cmd = new speedtestCmd();
+				$cmd->setName($name);
+			}
+			$cmd->setLogicalId($logicalId);
+			$cmd->setEqLogic_id($this->getId());
+			$cmd->setType('info');
+			$cmd->setSubType('string');
+			$cmd->save();
 		}
-		$speedul->setLogicalId('speedul');
-		$speedul->setEqLogic_id($this->getId());
-		$speedul->setType('info');
-		$speedul->setSubType('numeric');
-		if( $this->getConfiguration('useArch', 0) == 1) {
-			$speedul->setUnite($this->getConfiguration('unit'));
-		} else {
-			$speedul->setUnite('Mbps');
-		}
-		$speedul->save(); 
-		
-		$ping = $this->getCmd(null, 'ping');
-		if (!is_object($ping)) {
-			$ping = new speedtestCmd();
-			$ping->setName(__('Ping', __FILE__));
-		}
-		$ping->setLogicalId('ping');
-		$ping->setEqLogic_id($this->getId());
-		$ping->setType('info');
-		$ping->setSubType('numeric');
-		$ping->setUnite('ms');
-		$ping->save(); 
-		
+
+		// Commande status (binary)
 		$status = $this->getCmd(null, 'status');
 		if (!is_object($status)) {
 			$status = new speedtestCmd();
@@ -338,9 +385,10 @@ class speedtest extends eqLogic {
 		$status->setLogicalId('status');
 		$status->setEqLogic_id($this->getId());
 		$status->setType('info');
-		$status->setSubType('binary');	
-		$status->save(); 		
-		
+		$status->setSubType('binary');
+		$status->save();
+
+		// Commande action refresh
 		$refresh = $this->getCmd(null, 'refresh');
 		if (!is_object($refresh)) {
 			$refresh = new speedtestCmd();
@@ -350,57 +398,81 @@ class speedtest extends eqLogic {
 		$refresh->setEqLogic_id($this->getId());
 		$refresh->setType('action');
 		$refresh->setSubType('other');
-		$refresh->save(); 
+		$refresh->save();
 
-		$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
-		if (is_object($cron)) {
-			$cron->remove();
-		}		
-    }
+		// Gestion du cron
+		if ($this->getIsEnable() == 1 && $this->getConfiguration('autCron', 0) == 1) {
+			$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));
+			if (!is_object($cron)) {
+				$cron = new cron();
+				$cron->setClass('speedtest');
+				$cron->setFunction('getInfo');
+				$cron->setOption(array('speedtest_id' => intval($this->getId())));
+			}
+			$cron->setSchedule($this->getConfiguration('refreshCron'));
+			$cron->save();
+		} else {
+			$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));
+			if (is_object($cron)) {
+				$cron->remove();
+			}
+		}
+	}
 
 	public function preRemove() {
-	   $cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));  
-	   if (is_object($cron)) {
-		   $cron->remove();
-	   }	
+		$cron = cron::byClassAndFunction('speedtest', 'getInfo', array('speedtest_id' => intval($this->getId())));
+		if (is_object($cron)) {
+			$cron->remove();
+		}
 	}
-	
+
 	public function toHtml($_version = 'dashboard') {
-		$cmd = $this->getCmd(null, 'status');
 		$replace = $this->preToHtml($_version);
 		if (!is_array($replace)) {
 			return $replace;
 		}
-		if ($cmd->execCmd() == 0) {
-			$replace['#image#'] = 'plugins/speedtest/doc/images/error.png';
-		}		
-		$version = jeedom::versionAlias($_version);		
-		if ($this->getConfiguration('autAlt', 0) == 1) {			
-				$replace['#image#'] = $this->getConfiguration('image');
-				return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));
-		} elseif ($this->getConfiguration('autAltBeta', 0) == 1) {
-			  $arr = parse_url($this->getConfiguration('image'));
-			  $url = 'https://beta.speedtest.net' . $arr['path'];
-			  $replace['#image#'] = $url;		  		  
-			  return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'defaut', 'speedtest')));			
-		} else {
-			  return parent::toHtml($_version);		
+		$version = jeedom::versionAlias($_version);
+
+		foreach (array('speeddl', 'speedul', 'ping', 'jitter', 'packet_loss', 'score', 'status') as $logicalId) {
+			$cmd = $this->getCmd('info', $logicalId);
+			if (!is_object($cmd)) {
+				$replace['#' . $logicalId . '_id#'] = '';
+				$replace['#' . $logicalId . '_value#'] = '-';
+				continue;
+			}
+			$replace['#' . $logicalId . '_id#'] = $cmd->getId();
+			$replace['#' . $logicalId . '_value#'] = $cmd->execCmd();
+			$replace['#' . $logicalId . '_collectDate#'] = $cmd->getCollectDate();
 		}
+
+		$cmdRefresh = $this->getCmd('action', 'refresh');
+		$replace['#refresh_id#'] = is_object($cmdRefresh) ? $cmdRefresh->getId() : '';
+
+		$replace['#maxdl#'] = $this->getConfiguration('maxdl', 1000);
+		$replace['#maxul#'] = $this->getConfiguration('maxul', 500);
+
+		// Labels traduits pour le template
+		$statusVal = isset($replace['#status_value#']) ? $replace['#status_value#'] : 0;
+		$replace['#status_text#'] = ($statusVal == 1) ? __('OK', __FILE__) : __('Erreur', __FILE__);
+		$replace['#status_color#'] = ($statusVal == 1) ? '#1D9E75' : '#E54D42';
+		$replace['#refresh_label#'] = __('Rafraichir', __FILE__);
+		$replace['#score_label#'] = __('Score', __FILE__);
+		$replace['#loss_label#'] = __('Perte', __FILE__);
+
+		return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'eqLogic.speedtest', 'speedtest')));
 	}
 }
 
 class speedtestCmd extends cmd {
-	
+
 	public function dontRemoveCmd() {
 		return true;
-	}	
-	
-    public function execute($_options = array()) {	
-		$server = $this->getEqLogic();
-		if ($this->getLogicalId() == 'refresh') {
-			$server->updateInfo();
-		}		
-    }
-}
+	}
 
-?>
+	public function execute($_options = array()) {
+		$server = speedtest::byId($this->getEqLogic_id());
+		if ($this->getLogicalId() == 'refresh') {
+			$server->getInfo();
+		}
+	}
+}

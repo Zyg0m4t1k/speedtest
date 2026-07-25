@@ -1,0 +1,30 @@
+name: i18n (Mips)
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - beta
+
+permissions:
+    contents: write
+    pull-requests: write
+
+concurrency:
+    group: i18n-${{ github.repository }}
+    cancel-in-progress: true
+
+jobs:
+    translate:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout plugin repo
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Generate i18n (Mips) + open PR
+              uses: Mips2648/plugins-translations@v2
+              with:
+                  target_languages: fr_FR,en_US,es_ES,de_DE,it_IT,pt_PT
