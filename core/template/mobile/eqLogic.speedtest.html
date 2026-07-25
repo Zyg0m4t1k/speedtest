@@ -1,0 +1,93 @@
+<div class="eqLogic eqLogic-widget #class# #category#" data-eqLogic_id="#id#" data-eqType="#eqType#" data-version="#version#" data-eqLogic_uid="#uid#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" style="#style#">
+  <span class="cmd refresh pull-right cursor" data-cmd_id="#refresh_id#">
+    <i class="fas fa-sync"></i>
+  </span>
+  <center>
+    <span class="widget-name">
+      <span class="warning" title="#alert_name#">
+        <i class='#alert_icon#'></i>
+      </span>
+      <span>#name_display# <span class="object_name">#object_name#</span></span>
+      <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(128,128,128,0.15);color:#status_color#;margin-left:6px;">#status_text#</span>
+      <br/>
+    </span>
+  </center>
+
+  <div style="padding:4px 14px 12px;">
+
+    <div style="position:relative;width:140px;margin:0 auto;">
+      <svg viewBox="0 -7 100 66" style="display:block;width:100%;">
+        <path d="M10 52 A 42 42 0 1 1 90 52" fill="none" stroke="rgba(128,128,128,0.15)" stroke-width="7" stroke-linecap="round"/>
+        <path id="st_dlarc_#uid#" d="M10 52 A 42 42 0 1 1 90 52" fill="none" stroke="#378ADD" stroke-width="7" stroke-linecap="round" stroke-dasharray="158" stroke-dashoffset="158" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);"/>
+      </svg>
+      <div style="position:absolute;left:0;right:0;bottom:6px;text-align:center;">
+        <div style="font-size:22px;font-weight:500;line-height:1;">#speeddl_value#</div>
+        <div style="font-size:9px;opacity:0.5;"><i class="fas fa-arrow-down"></i> Mbit/s</div>
+      </div>
+      <div style="position:absolute;top:-2px;right:-6px;width:30px;height:30px;" title="#score_label# : #score_value#/10">
+        <svg viewBox="0 0 34 34" style="transform:rotate(-90deg);">
+          <circle cx="17" cy="17" r="14" fill="none" stroke="rgba(128,128,128,0.15)" stroke-width="3"/>
+          <circle id="st_scorearc_#uid#" cx="17" cy="17" r="14" fill="none" stroke="#1D9E75" stroke-width="3" stroke-dasharray="88" stroke-dashoffset="88" stroke-linecap="round" style="transition:stroke-dashoffset 1.2s;"/>
+        </svg>
+        <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;">#score_value#</span>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:8px 2px 10px;font-size:12px;">
+      <i class="fas fa-arrow-up" style="color:#1D9E75;font-size:14px;"></i>
+      <div style="flex:1;height:4px;border-radius:2px;background:rgba(128,128,128,0.15);overflow:hidden;">
+        <div id="st_ulbar_#uid#" style="height:100%;width:0;border-radius:2px;background:#1D9E75;transition:width 1.2s cubic-bezier(.4,0,.2,1);"></div>
+      </div>
+      <span style="font-weight:500;">#speedul_value# <span style="font-size:10px;opacity:0.5;font-weight:400;">Mbit/s</span></span>
+    </div>
+
+    <div style="display:flex;gap:6px;">
+      <div style="flex:1;text-align:center;padding:5px 2px;border-radius:6px;background:rgba(128,128,128,0.08);">
+        <span style="font-size:12px;font-weight:500;display:block;">#ping_value# ms</span>
+        <span style="font-size:8px;opacity:0.5;text-transform:uppercase;letter-spacing:.5px;"><i class="fas fa-stopwatch" style="margin-right:2px;"></i>Ping</span>
+      </div>
+      <div style="flex:1;text-align:center;padding:5px 2px;border-radius:6px;background:rgba(128,128,128,0.08);">
+        <span style="font-size:12px;font-weight:500;display:block;">#jitter_value# ms</span>
+        <span style="font-size:8px;opacity:0.5;text-transform:uppercase;letter-spacing:.5px;"><i class="fas fa-wave-square" style="margin-right:2px;"></i>Jitter</span>
+      </div>
+      <div style="flex:1;text-align:center;padding:5px 2px;border-radius:6px;background:rgba(128,128,128,0.08);">
+        <span style="font-size:12px;font-weight:500;display:block;">#packet_loss_value# %</span>
+        <span style="font-size:8px;opacity:0.5;text-transform:uppercase;letter-spacing:.5px;"><i class="fas fa-exclamation-triangle" style="margin-right:2px;"></i>#loss_label#</span>
+      </div>
+    </div>
+
+  </div>
+  <script>
+  (function() {
+    var uid = '#uid#'
+    var dl = parseFloat('#speeddl_value#') || 0
+    var ul = parseFloat('#speedul_value#') || 0
+    var score = parseFloat('#score_value#') || 0
+    var maxdl = parseFloat('#maxdl#') || 1000
+    var maxul = parseFloat('#maxul#') || 500
+
+    setTimeout(function() {
+      var dlArc = document.getElementById('st_dlarc_' + uid)
+      if (dlArc) {
+        dlArc.style.strokeDashoffset = 158 * (1 - Math.min(dl / maxdl, 1))
+      }
+      var scoreArc = document.getElementById('st_scorearc_' + uid)
+      if (scoreArc) {
+        scoreArc.style.strokeDashoffset = 88 * (1 - score / 10)
+      }
+      var ulBar = document.getElementById('st_ulbar_' + uid)
+      if (ulBar) {
+        ulBar.style.width = Math.min(ul / maxul * 100, 100) + '%'
+      }
+    }, 300)
+
+    if ('#refresh_id#' != '') {
+      $('.eqLogic[data-eqLogic_uid=#uid#] .refresh').on('click', function() {
+        jeedom.cmd.execute({id: '#refresh_id#'})
+      })
+    } else {
+      $('.eqLogic[data-eqLogic_uid=#uid#] .refresh').remove()
+    }
+  })()
+  </script>
+</div>

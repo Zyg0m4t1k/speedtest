@@ -11,7 +11,7 @@ $plugin = plugin::byId('speedtest');
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
 		<legend><i class="fas fa-cog"></i> {{Gestion}}</legend>
         <div class="eqLogicThumbnailContainer">
-        	<div class="cursor eqLogicAction logoSecondary" data-action="add"  >
+        	<div class="cursor eqLogicAction logoPrimary" data-action="add" style="--logo-primary-color:#00A9EC;">
                 <i class="fas fa-plus-circle"></i>
                 <br>
                 <span>{{Ajouter}}</span>
@@ -23,7 +23,15 @@ $plugin = plugin::byId('speedtest');
             </div>            
 		</div>			
 		<legend>{{Mes Equipements}}</legend>
-		<input class="form-control" placeholder="{{Rechercher}}" id="in_searchEqlogic" />
+		        <div class="input-group" style="margin:5px;">
+            <input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic">
+            <div class="input-group-btn">
+                <a id="bt_resetSearch" class="btn" style="width:30px"><i class="fas fa-times"></i></a>
+                <a class="btn roundedRight active" id="bt_pluginDisplayAsTable" data-coresupport="1" data-state="1"><i class="fas fa-grip-lines"></i></a>
+            </div>
+        </div>
+
+
 		<div class="eqLogicThumbnailContainer">
 		<?php
 			foreach ($eqLogics as $eqLogic) {				
@@ -117,47 +125,41 @@ $plugin = plugin::byId('speedtest');
 							</div>
 						</div>                     	
 					</div>
-<!--					<div class="form-group">
-						<label class="col-md-2 control-label">{{Arch}}</label>
-						<div class="col-md-1">
-							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="arch" placeholder="Server id" disabled/>
-						</div>       
-					</div> 
-					<br/> 					
 					<div class="form-group">
-						<label class="col-md-2 control-label">{{Id serveur}}</label>
-						<div class="col-md-1">
-							<input type="text"  class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="server_id" placeholder="Server id"/>
-						</div> 
-						<div class="col-md-1"> 
-							<label class=" ontrol-label" ><a style="text-decoration: underline"  href="http://www.speedtestserver.com/">{{Liste des serveurs}}</a></label>  
-						</div>       
-					</div> -->
-					<br/>                        
+						<label class="col-md-2 control-label">{{Id serveur (optionnel)}}</label>
+						<div class="col-md-2">
+							<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="server_id" placeholder="{{Auto}}"/>
+						</div>
+						<div class="col-md-2">
+							<span class="label label-info">{{Laisser vide = auto}}</span>
+						</div>
+					</div>
+					<br/>
 					<div class="form-group">
-						<label class="col-md-2 control-label">{{Widget alternatif}}</label>
-						<div class="col-md-1">
-							<input type="checkbox" class="eqLogicAttr widgetType" data-l1key="configuration" data-l2key="autAlt"/>
-						</div>                   	
+						<label class="col-md-2 control-label">{{Echelle max Download (Mbit/s)}}</label>
+						<div class="col-md-2">
+							<input type="number" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="maxdl" placeholder="1000"/>
+						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-md-2 control-label">{{Widget Betâ}}</label>
-						<div class="col-md-1">
-							<input type="checkbox" class="eqLogicAttr widgetType" data-l1key="configuration" data-l2key="autAltBeta" />
-						</div>                   	
+						<label class="col-md-2 control-label">{{Echelle max Upload (Mbit/s)}}</label>
+						<div class="col-md-2">
+							<input type="number" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="maxul" placeholder="500"/>
+						</div>
 					</div>                            
 				</form>                      
 			</div>
 			<div role="tabpanel" class="tab-pane" id="infocmd">  
 				<br />
-				<div class="col-md-1"></div>
-				<table style="width: 600px" id="table_cmd" class="table table-bordered table-condensed">
+				<table id="table_cmd" class="table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th>{{Id}}</th>
-							<th>{{Nom}}</th>
-							<th>{{Options}}</th>
-							<th>{{Actions}}</th>
+							<th class="hidden-xs" style="min-width:50px;width:70px;">{{Id}}</th>
+							<th style="min-width:200px;width:350px;">{{Nom}}</th>
+							<th style="min-width:100px;width:200px;">{{Type}}</th>
+							<th style="min-width:200px;">{{Options}}</th>
+							<th style="min-width:80px;width:120px;">{{Etat}}</th>
+							<th style="min-width:150px;width:200px;">{{Actions}}</th>
 						</tr>
 					</thead>
 					<tbody></tbody>

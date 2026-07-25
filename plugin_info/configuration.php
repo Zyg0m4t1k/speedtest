@@ -54,36 +54,27 @@ if (!isConnect('admin')) {
 </fieldset>
 </form>
 <script>
-
-	$('.configKey[data-l1key=checkIp]').change(function () {
-		 if(this.checked) {
-			$.ajax({// fonction permettant de faire de l'ajax
-				type: "POST", // methode de transmission des données au fichier php
-				url: "plugins/speedtest/core/ajax/speedtest.ajax.php", // url du fichier php
-				data: {
-					action: "getIp"
-				},
-				dataType: 'json',
-				error: function (request, status, error) {
-					handleAjaxError(request, status, error);
-				},
-				success: function (data) { // si l'appel a bien fonctionné
-					if (data.state != 'ok') {
-						$('#div_alert').showAlert({message: data.result, level: 'danger'});
-						return;
-					}
-					console.log(data.result);
-					$('.configKey[data-l1key=ipkey]').empty().val(data.result);
-					savePluginConfig();
-				}
-			});				 
-			 
-		 } else {
-			  $('.configKey[data-l1key=ipkey]').empty().val('');
-			  savePluginConfig();
-		 }
-		 
-	});	
-
+document.querySelector('.configKey[data-l1key="checkIp"]').addEventListener('change', function() {
+	if (this.checked) {
+		domUtils.ajax({
+			type: "POST",
+			url: "plugins/speedtest/core/ajax/speedtest.ajax.php",
+			data: {
+				action: "getIp"
+			},
+			dataType: 'json',
+			error: function(error) {
+				jeedomUtils.showAlert({message: error.message, level: 'danger'})
+			},
+			success: function(data) {
+				document.querySelector('.configKey[data-l1key="ipkey"]').jeeValue(data.result)
+				jeeFrontEnd.plugin.savePluginConfig()
+			}
+		})
+	} else {
+		document.querySelector('.configKey[data-l1key="ipkey"]').jeeValue('')
+		jeeFrontEnd.plugin.savePluginConfig()
+	}
+})
 </script>
 
