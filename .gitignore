@@ -1,2 +1,4 @@
 3rdparty/
 resources/venv/
+.prettierrc
+.php-cs-fixer.php
