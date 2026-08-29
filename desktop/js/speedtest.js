@@ -35,6 +35,14 @@ document.getElementById('div_pageContainer').addEventListener('click', function(
         })
         return
     }
+    if (_target = event.target.closest('#bt_selectServer')) {
+        jeeDialog.dialog({
+            id: 'md_speedtestServerList',
+            title: '{{Liste des serveurs}}',
+            contentUrl: 'index.php?v=d&plugin=speedtest&modal=modal.list'
+        })
+        return
+    }
 })
 
 function printEqLogic(_eqLogic) {

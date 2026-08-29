@@ -128,7 +128,12 @@ $plugin = plugin::byId('speedtest');
 					<div class="form-group">
 						<label class="col-md-2 control-label">{{Id serveur (optionnel)}}</label>
 						<div class="col-md-2">
-							<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="server_id" placeholder="{{Auto}}"/>
+							<div class="input-group">
+								<input type="text" class="eqLogicAttr form-control roundedLeft" data-l1key="configuration" data-l2key="server_id" placeholder="{{Auto}}"/>
+								<span class="input-group-btn">
+									<a class="btn btn-default roundedRight" id="bt_selectServer" title="{{Liste des serveurs}}"><i class="fas fa-list"></i></a>
+								</span>
+							</div>
 						</div>
 						<div class="col-md-2">
 							<span class="label label-info">{{Laisser vide = auto}}</span>

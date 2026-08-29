@@ -1,38 +1,15 @@
 <?php
 
-
-
-if (init('id') == '') {
-    throw new Exception('{{L\'id de l\'opération ne peut etre vide : }}' . init('op_id'));
-}
-
-$id = init('id');
-$eq = eqLogic::byId($id);
-if(!is_object($eq)) {
-	echo '<legend class="danger">Equipement non trouvé</legend>';
-}
-if( $eq->getConfiguration('useArch', 0) == 1 ) {
-	$dir = __DIR__ . '/../../3rdparty/' . $eq->getConfiguration('arch');
-	if(!is_dir($dir)) {
-		echo '<legend class="danger">Architecture non valable</legend>';
-		die;
-	}
-	$cmd = $dir . '/speedtest --servers';
-	$list = com_shell::execute(system::getCmdSudo() . $cmd);
-	$lines = explode(PHP_EOL, $list);
-	echo '<center>';
-	foreach ($lines as $line) {
-		echo $line . '<br/>';
-	}
-	echo '</center>';
+$speedtestBin = speedtest::getSpeedtestBin();
+$cmd = escapeshellcmd($speedtestBin) . ' --list';
+$output = array();
+$rc = 0;
+exec($cmd . ' 2>&1', $output, $rc);
+if ($rc !== 0) {
+	echo '<legend class="danger">{{Erreur lors de la récupération des serveurs}}</legend>';
 	die;
-	
-} else {
-	
 }
-$cmd = 'speedtest --list ';
-$list = com_shell::execute(system::getCmdSudo() . $cmd);
-$lines = explode(PHP_EOL, $list);
+$lines = $output;
 ?>
 <br/>
 <center>
@@ -65,26 +42,41 @@ $lines = explode(PHP_EOL, $list);
 	</table>
 </center>
 <script>
-$( '#countrysearchServer' ).off( 'keyup' ).keyup( function () {
-	var search = $( this ).value()
-	if ( search == '' ) {
-		$( '#speedtest_serverList .dataServer' ).show()
+document.getElementById('countrysearchServer').addEventListener('keyup', function() {
+	var search = this.value
+	var rows = document.querySelectorAll('#speedtest_serverList .dataServer')
+	if (search == '') {
+		rows.forEach(function(row) { row.style.display = '' })
 		return
 	}
-	$( '#speedtest_serverList .dataServer' ).hide()
-	search = search.normalize( 'NFD' ).replace( /[\u0300-\u036f]/g, "" ).toLowerCase()
-	var text
-	$( '#speedtest_serverList .country' ).each( function () {
-		text = $( this ).text().normalize( 'NFD' ).replace( /[\u0300-\u036f]/g, "" ).toLowerCase()
-		if ( text.indexOf( search ) >= 0 ) {
-			$( this ).closest( 'tr' ).show()
+	rows.forEach(function(row) { row.style.display = 'none' })
+	search = search.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+	document.querySelectorAll('#speedtest_serverList .country').forEach(function(el) {
+		var text = el.textContent.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+		if (text.indexOf(search) >= 0) {
+			el.closest('tr').style.display = ''
 		}
-	} )
-} )
+	})
+})
+
+document.getElementById('speedtest_serverList').addEventListener('click', function(event) {
+	var row = event.target.closest('.dataServer')
+	if (!row) return
+	var serverId = row.querySelector('td').textContent.trim()
+	document.querySelector('.eqLogicAttr[data-l1key="configuration"][data-l2key="server_id"]').jeeValue(serverId)
+	jeeFrontEnd.modifyWithoutSave = true
+	document.getElementById('md_speedtestServerList')._jeeDialog.destroy()
+})
 </script>
 <style>
-	#speedtest_serverList th , #speedtest_serverList td  {
-		padding:10px;
+	#speedtest_serverList th, #speedtest_serverList td {
+		padding: 10px;
 		text-align: center;
+	}
+	#speedtest_serverList .dataServer {
+		cursor: pointer;
+	}
+	#speedtest_serverList .dataServer:hover {
+		background-color: var(--el-hoverbgColor);
 	}
 </style>

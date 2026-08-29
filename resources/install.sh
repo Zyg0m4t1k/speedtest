@@ -12,8 +12,7 @@ fi
 mkdir -p "$(dirname "$PROGRESS_FILE")"
 echo 0 > "$PROGRESS_FILE"
 
-cleanup() { rm -f "$PROGRESS_FILE" 2>/dev/null || true; }
-trap cleanup EXIT
+trap 'rm -f "$PROGRESS_FILE" 2>/dev/null || true' EXIT
 
 log_step() {
   echo "$1" > "$PROGRESS_FILE" 2>/dev/null || true
@@ -56,3 +55,4 @@ log_step 90 "Health check"
 echo "[speedtest][check] speedtest-cli OK"
 
 log_step 100 "Done"
+rm -f "$PROGRESS_FILE" 2>/dev/null || true
