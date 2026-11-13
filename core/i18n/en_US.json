@@ -19,9 +19,6 @@
         "Serveur": "Server",
         "Upload": "Upload"
     },
-    "plugins\/speedtest\/desktop\/js\/configuration.js": {
-        "Listes des serveurs": "Server list"
-    },
     "plugins\/speedtest\/desktop\/js\/speedtest.js": {
         "Afficher": "Display",
         "Aucune": "None",
@@ -29,6 +26,7 @@
         "Commande info liée": "Linked info command",
         "Historiser": "Historize",
         "Inverser": "Invert",
+        "Liste des serveurs": "",
         "Max": "Max",
         "Min": "Min",
         "Nom de la commande": "Command name",
@@ -36,20 +34,12 @@
         "Tester": "Test",
         "Unité": "Unit"
     },
-    "plugins\/speedtest\/desktop\/modal\/modal.config.php": {
-        " Les serveurs sont donnés à titre indicatif, En cas d'échec , choissisez-en un autre...": " Servers are given for reference only. If a test fails, try another one...",
-        " Nom ": " Name ",
-        " Pays ": " Country ",
-        " Sponsor ": " Sponsor ",
-        " Url ": " Url ",
-        "Rechercher Pays": "Search Country"
-    },
     "plugins\/speedtest\/desktop\/modal\/modal.list.php": {
         " Distance ": " Distance ",
         " Localisation ": " Location ",
         " Nom ": " Name ",
         " serveurs ": " servers ",
-        "L\\'id de l\\'opération ne peut etre vide : ": "The operation ID cannot be empty: ",
+        "Erreur lors de la récupération des serveurs": "",
         "Rechercher Pays": "Search Country"
     },
     "plugins\/speedtest\/desktop\/php\/speedtest.php": {
@@ -73,6 +63,7 @@
         "Id": "Id",
         "Id serveur (optionnel)": "Server ID (optional)",
         "Laisser vide = auto": "Leave empty = auto",
+        "Liste des serveurs": "",
         "Mes Equipements": "My Equipment",
         "Nom": "Name",
         "Nom de l'équipement": "Equipment name",
