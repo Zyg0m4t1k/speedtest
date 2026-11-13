@@ -19,9 +19,6 @@
         "Serveur": "Server",
         "Upload": "Upload"
     },
-    "plugins\/speedtest\/desktop\/js\/configuration.js": {
-        "Listes des serveurs": "Elenco server"
-    },
     "plugins\/speedtest\/desktop\/js\/speedtest.js": {
         "Afficher": "Visualizza",
         "Aucune": "Nessuna",
@@ -29,6 +26,7 @@
         "Commande info liée": "Comando info collegato",
         "Historiser": "Storicizza",
         "Inverser": "Inverti",
+        "Liste des serveurs": "",
         "Max": "Max",
         "Min": "Min",
         "Nom de la commande": "Nome del comando",
@@ -36,20 +34,12 @@
         "Tester": "Testa",
         "Unité": "Unità"
     },
-    "plugins\/speedtest\/desktop\/modal\/modal.config.php": {
-        " Les serveurs sont donnés à titre indicatif, En cas d'échec , choissisez-en un autre...": " I server sono forniti a titolo indicativo. In caso di errore, sceglierne un altro...",
-        " Nom ": " Nome ",
-        " Pays ": " Paese ",
-        " Sponsor ": " Sponsor ",
-        " Url ": " Url ",
-        "Rechercher Pays": "Cerca Paese"
-    },
     "plugins\/speedtest\/desktop\/modal\/modal.list.php": {
         " Distance ": " Distanza ",
         " Localisation ": " Posizione ",
         " Nom ": " Nome ",
         " serveurs ": " server ",
-        "L\\'id de l\\'opération ne peut etre vide : ": "L'ID dell'operazione non può essere vuoto: ",
+        "Erreur lors de la récupération des serveurs": "",
         "Rechercher Pays": "Cerca Paese"
     },
     "plugins\/speedtest\/desktop\/php\/speedtest.php": {
@@ -73,6 +63,7 @@
         "Id": "Id",
         "Id serveur (optionnel)": "ID server (opzionale)",
         "Laisser vide = auto": "Lasciare vuoto = auto",
+        "Liste des serveurs": "",
         "Mes Equipements": "I miei Dispositivi",
         "Nom": "Nome",
         "Nom de l'équipement": "Nome del dispositivo",
